@@ -777,8 +777,9 @@ class ScoreCalculator:
         number += values
 
         values = self.pure_straight()
+        n = np.max(values)
         for i in np.where(values != 0)[0]:
-            yaku_list[i].append(f'一气通贯({np.max(values)}番)')
+            yaku_list[i].append(f'一气通贯({n}番)')
         number += values
 
         n = self.all_mixed_terminals()
@@ -787,13 +788,15 @@ class ScoreCalculator:
         number += n
 
         values = self.mixed_outside_hand()
+        n = np.max(values)
         for i in np.where(values != 0)[0]:
-            yaku_list[i].append(f'混全带幺九({np.max(values)}番)')
+            yaku_list[i].append(f'混全带幺九({n}番)')
         number += values
 
         values = self.mixed_triple_chow()
+        n = np.max(values)
         for i in np.where(values != 0)[0]:
-            yaku_list[i].append(f'三色同顺({np.max(values)}番)')
+            yaku_list[i].append(f'三色同顺({n}番)')
         number += values
 
         values = self.triple_pungs()
@@ -806,8 +809,9 @@ class ScoreCalculator:
             common_yaku_list.append(f'混一色({n}番)')
 
         values = self.outside_hand()
+        n = np.max(values)
         for i in np.where(values != 0)[0]:
-            yaku_list[i].append(f'纯全带幺九({np.max(values)}番)')
+            yaku_list[i].append(f'纯全带幺九({n}番)')
         number += values
 
         n = self.pure_hand()
