@@ -191,12 +191,10 @@ class Mahjong:
         hand_tiles, called_tiles = self.str2id(tiles)
         if not self.check_called_tiles(called_tiles):
             return
-        if not hand_tiles:
-            return
         res = set()
         total_counter = Counter(hand_tiles + sum(called_tiles, []))
 
-        if len(tiles) == 13:
+        if len(hand_tiles) == 13 and not called_tiles:
             """Check thirteen orphans"""
             diff = TERMINALS_HONORS.difference(set(hand_tiles))
             diff.update(set(hand_tiles).difference(TERMINALS_HONORS))
@@ -211,5 +209,6 @@ class Mahjong:
             if total_counter[i] < 4:
                 r = self.search_combinations(hand_tiles + [i])
                 if r:
-                    res.add(i)
+                    if (len(r) == 7 and not called_tiles) or len(r) == 5 - len(called_tiles):
+                        res.add(i)
         return self.id2str(res) if to_str else res
