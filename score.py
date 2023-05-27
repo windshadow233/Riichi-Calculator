@@ -481,7 +481,7 @@ class ScoreCalculator:
 
     def thirteen_orphans(self):
         """国士无双（十三面）（门清限定）"""
-        if not self._is_concealed_hand:
+        if self.called_tiles:
             return 0
         if self._tiles_set == TERMINALS_HONORS and len(self.hand_tiles) == 14:
             if self._tiles.count(self.hu_tile) > 1:
@@ -543,7 +543,7 @@ class ScoreCalculator:
 
     def nine_gates(self):
         """（纯正）九莲宝灯（门清限定）"""
-        if not self._is_concealed_hand:
+        if self.called_tiles:
             return 0
         d = copy(self._hand_counter)
         first_tile = self._tiles[0]
