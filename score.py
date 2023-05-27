@@ -23,6 +23,7 @@ SCORE_LEVELS = {
 
 class ScoreCalculator:
     """以下判断以和了型为前提条件"""
+
     def __init__(self):
         self.tiles_str = ''
         self.checker = Mahjong()
@@ -38,14 +39,14 @@ class ScoreCalculator:
         self.prevailing_wind = None
         self.dealer_wind = None
         self.is_self_draw = None
-        self.lichi = None
-        self.dora = None
-        self.ippatsu = None
-        self.is_under_the_sea = None
-        self.is_after_a_kong = None
-        self.is_robbing_the_kong = None
-        self.is_blessing_of_heaven = None
-        self.is_blessing_of_earth = None
+        self._lichi = None
+        self._dora = None
+        self._ippatsu = None
+        self._is_under_the_sea = None
+        self._is_after_a_kong = None
+        self._is_robbing_the_kong = None
+        self._is_blessing_of_heaven = None
+        self._is_blessing_of_earth = None
 
         self.fu = self.yaku_list = self.number = self.level = self.score = None
 
@@ -111,14 +112,14 @@ class ScoreCalculator:
         self.is_self_draw = is_self_draw
         if not self.is_concealed_hand():
             lichi = 0
-        self.lichi = lichi
-        self.dora = dora
-        self.ippatsu = ippatsu and bool(lichi)
-        self.is_under_the_sea = is_under_the_sea
-        self.is_after_a_kong = is_after_a_kong and is_self_draw
-        self.is_robbing_the_kong = is_robbing_the_kong and not is_self_draw
-        self.is_blessing_of_heaven = is_blessing_of_heaven and dealer_wind == 1 and is_self_draw
-        self.is_blessing_of_earth = is_blessing_of_earth and dealer_wind != 1 and is_self_draw
+        self._lichi = lichi
+        self._dora = dora
+        self._ippatsu = ippatsu and bool(lichi)
+        self._is_under_the_sea = is_under_the_sea
+        self._is_after_a_kong = is_after_a_kong and is_self_draw
+        self._is_robbing_the_kong = is_robbing_the_kong and not is_self_draw
+        self._is_blessing_of_heaven = is_blessing_of_heaven and dealer_wind == 1 and is_self_draw
+        self._is_blessing_of_earth = is_blessing_of_earth and dealer_wind != 1 and is_self_draw
 
         if self.is_hu:
             self.fu, self.yaku_list, self.number, self.level, self.score = self.calculate()
@@ -623,10 +624,10 @@ class ScoreCalculator:
         full = 0
         is_concealed_hand = self.is_concealed_hand()
         fu = self.fussu()
-        if self.is_blessing_of_heaven:
+        if self._is_blessing_of_heaven:
             yaku_list.append('天和(役满)')
             full += 1
-        if self.is_blessing_of_earth:
+        if self._is_blessing_of_earth:
             yaku_list.append('地和(役满)')
             full += 1
         n = self.four_kongs()
@@ -689,26 +690,26 @@ class ScoreCalculator:
             return fu, yaku_list, 13 * full, YAKU_MAN, full * 8000
         number = np.zeros(shape=len(self.combinations))
         common_yaku_list = []
-        if self.is_under_the_sea:
+        if self._is_under_the_sea:
             if self.is_self_draw:
                 common_yaku_list.append('海底捞月(1番)')
             else:
                 common_yaku_list.append('河底捞鱼(1番)')
             number += 1
-        if self.is_after_a_kong:
+        if self._is_after_a_kong:
             common_yaku_list.append('岭上开花(1番)')
             number += 1
-        if self.is_robbing_the_kong:
+        if self._is_robbing_the_kong:
             common_yaku_list.append('抢杠(1番)')
             number += 1
         yaku_list: List[List[str]] = [[] for _ in self.combinations]
         if is_concealed_hand:
-            number += self.lichi
-            if self.lichi == 1:
+            number += self._lichi
+            if self._lichi == 1:
                 common_yaku_list.append('立直(1番)')
-            elif self.lichi == 2:
+            elif self._lichi == 2:
                 common_yaku_list.append('两立直(2番)')
-            if self.ippatsu:
+            if self._ippatsu:
                 common_yaku_list.append('一发(1番)')
                 number += 1
             if self.is_self_draw:
@@ -828,7 +829,7 @@ class ScoreCalculator:
                 n -= 1
             common_yaku_list.append(f'清一色({n}番)')
         number += n
-        number += self.dora
+        number += self._dora
         score = fu * 2 ** (number + 2)
         self.max_score_index = i = score.argmax()
         fu = fu[i]
@@ -856,8 +857,8 @@ class ScoreCalculator:
         else:
             score = 8000
             level = TOTAL_YAKU_MAN
-        if self.dora:
-            yaku.append(f'DORA {self.dora}')
+        if self._dora:
+            yaku.append(f'DORA {self._dora}')
         return fu, common_yaku_list + yaku, int(number), level, int(score)
 
 
