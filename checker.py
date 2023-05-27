@@ -151,17 +151,18 @@ class Mahjong:
                 return False
         return True
 
-    def search_combinations(self, tiles: List[int]):
+    def search_combinations(self, tiles: List[int], called_count):
         res = []
         counter = Counter(tiles)
-        if all(i == 2 for i in counter.values()) and len(counter) == 7:
-            res.append([(i, i) for i in counter.keys()])
+        if called_count == 0:
+            if all(i == 2 for i in counter.values()) and len(counter) == 7:
+                res.append([(i, i) for i in counter.keys()])
 
         def split(tiles: List[int], current=None):
             current = current or []
             if len(tiles) == 2 and tiles[0] == tiles[1]:
                 current.append((tiles[0], tiles[0]))
-                if len(current) > 5:
+                if len(current) + called_count != 5:
                     return
                 res.append(current)
                 return
@@ -207,8 +208,7 @@ class Mahjong:
 
         for i in range(34):
             if total_counter[i] < 4:
-                r = self.search_combinations(hand_tiles + [i])
-                if r:
-                    if (len(r) == 7 and not called_tiles) or len(r) == 5 - len(called_tiles):
-                        res.add(i)
+                combs = self.search_combinations(hand_tiles + [i], len(called_tiles))
+                if combs:
+                    res.add(i)
         return self.id2str(res) if to_str else res
