@@ -850,10 +850,10 @@ class ScoreCalculator:
 if __name__ == '__main__':
     calculator = ScoreCalculator()
     calculator.update(
-        tiles='19m19s19p1234567z7z 123z',
+        tiles='123456789s45p22p3p',
         prevailing_wind=2,
         dealer_wind=1,
-        is_self_draw=0,
+        is_self_draw=1,
         lichi=0,
         dora=3,
         ippatsu=False,
@@ -863,4 +863,4 @@ if __name__ == '__main__':
         is_blessing_of_heaven=False,
         is_blessing_of_earth=False
     )
-    print(calculator.max_score_index)
+    print(calculator)
