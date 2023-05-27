@@ -97,7 +97,7 @@ class ScoreCalculator:
         self._tiles = self.hand_tiles + sum(self.called_tiles, [])
         self._tiles_set = set(self._tiles)
         self.is_hu = False
-        self.combinations = list(self.checker.search_combinations(self.hand_tiles))
+        self.combinations = list(self.checker.search_combinations(self.hand_tiles, len(self.called_tiles)))
         if self.called_tiles:
             if self.checker.check_called_tiles(self.called_tiles):
                 self.combinations = list(filter(lambda x: len(x) + len(self.called_tiles) == 5, self.combinations))
