@@ -722,7 +722,7 @@ class ScoreCalculator:
         if self._ippatsu:
             common_yaku_list.append('一发(1番)')
             number += 1
-        if self._is_self_draw:
+        if self.concealed_hand_self_drawn():
             common_yaku_list.append('门前清自摸和(1番)')
             number += 1
 
@@ -850,7 +850,7 @@ class ScoreCalculator:
 if __name__ == '__main__':
     calculator = ScoreCalculator()
     calculator.update(
-        tiles='123456789s45p22p3p',
+        tiles='5677p111678s7p 5555z',
         prevailing_wind=2,
         dealer_wind=1,
         is_self_draw=1,
