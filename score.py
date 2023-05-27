@@ -27,18 +27,15 @@ class ScoreCalculator:
     def __init__(self):
         self.tiles_str = ''
         self.checker = Mahjong()
-        self.hu_tile = None
-        self.hand_tiles, self.called_tiles = [], []
-        self.hand_counter = Counter(self.hand_tiles)
-        self.tiles = []
-        self.tiles_set = set()
-        self.is_hu = False
-        self.combinations = []
-        self.max_score_index = None
+        self._hand_counter = None
+        self._tiles = []
+        self._tiles_set = set()
+        self._is_concealed_hand = None
+        self._kuisagari = 0
 
-        self.prevailing_wind = None
-        self.dealer_wind = None
-        self.is_self_draw = None
+        self._prevailing_wind = None
+        self._dealer_wind = None
+        self._is_self_draw = None
         self._lichi = None
         self._dora = None
         self._ippatsu = None
@@ -47,6 +44,12 @@ class ScoreCalculator:
         self._is_robbing_the_kong = None
         self._is_blessing_of_heaven = None
         self._is_blessing_of_earth = None
+
+        self.hu_tile = None
+        self.hand_tiles, self.called_tiles = [], []
+        self.is_hu = False
+        self.combinations = []
+        self.max_score_index = None
 
         self.fu = self.yaku_list = self.number = self.level = self.score = None
 
@@ -90,9 +93,9 @@ class ScoreCalculator:
         except:
             raise ValueError("No hu tile")
         self.hand_tiles, self.called_tiles = self.checker.str2id(self.tiles_str)
-        self.hand_counter = Counter(self.hand_tiles)
-        self.tiles = self.hand_tiles + sum(self.called_tiles, [])
-        self.tiles_set = set(self.tiles)
+        self._hand_counter = Counter(self.hand_tiles)
+        self._tiles = self.hand_tiles + sum(self.called_tiles, [])
+        self._tiles_set = set(self._tiles)
         self.is_hu = False
         self.combinations = list(self.checker.search_combinations(self.hand_tiles))
         if self.called_tiles:
@@ -104,13 +107,15 @@ class ScoreCalculator:
             self.combinations = list(filter(lambda x: len(x) == 5 or len(x) == 7, self.combinations))
             if self.combinations:
                 self.is_hu = True
+        self._is_concealed_hand = self.called_tiles == [] or all(self.checker.is_concealed_kong(_) for _ in self.called_tiles)
+        self._kuisagari = 1 - self._is_concealed_hand
         if self.thirteen_orphans():
             self.is_hu = True
 
-        self.prevailing_wind = [27, 28, 29, 30][prevailing_wind - 1]
-        self.dealer_wind = [27, 28, 29, 30][dealer_wind - 1]
-        self.is_self_draw = is_self_draw
-        if not self.is_concealed_hand():
+        self._prevailing_wind = [27, 28, 29, 30][prevailing_wind - 1]
+        self._dealer_wind = [27, 28, 29, 30][dealer_wind - 1]
+        self._is_self_draw = is_self_draw
+        if not self._is_concealed_hand:
             lichi = 0
         self._lichi = lichi
         self._dora = dora
@@ -131,8 +136,6 @@ class ScoreCalculator:
             self.level = SCORE_LEVELS.get(self.level)
 
     def hand_string(self):
-        # hand_tiles = copy(self.hand_tiles)
-        # hand_tiles.remove(self.hu_tile)
         return ' '.join(ID2NAME[tile] for tile in self.hand_tiles)
 
     def called_string(self):
@@ -164,10 +167,6 @@ class ScoreCalculator:
             s += '\n没有和'
         return s
 
-    def is_concealed_hand(self):
-        """判断门清"""
-        return self.called_tiles == [] or all(self.checker.is_concealed_kong(_) for _ in self.called_tiles)
-
     def _is_sequence_hand(self, combination):
         """判断某一种组合是否满足平和"""
         if len(combination) != 5:
@@ -177,7 +176,7 @@ class ScoreCalculator:
             if self.checker.is_triplet(tiles):
                 return 0
             if self.checker.is_pair(tiles):
-                if tiles[0] in DRAGONS or tiles[0] == self.dealer_wind or tiles[0] == self.prevailing_wind:
+                if tiles[0] in DRAGONS or tiles[0] == self._dealer_wind or tiles[0] == self._prevailing_wind:
                     return 0
             if self.checker.is_seq(tiles):
                 if (self.hu_tile == tiles[0] and tiles[2] not in [8, 17, 26]) \
@@ -199,19 +198,21 @@ class ScoreCalculator:
 
     def all_simple(self):
         """断幺九"""
-        if self.tiles_set.isdisjoint(TERMINALS_HONORS):
+        if self._tiles_set.isdisjoint(TERMINALS_HONORS):
             return 1
         return 0
 
     def concealed_hand_self_drawn(self):
         """门清自摸"""
-        if self.is_concealed_hand() and self.is_self_draw:
+        if self._is_concealed_hand and self._is_self_draw:
             return 1
         return 0
 
     def pure_double_chow(self):
         """一杯口（门清限定）"""
         values = []
+        if not self._is_concealed_hand:
+            return np.array([0])
         for combination in self.combinations:
             seqs = set()
             s = 0
@@ -234,9 +235,9 @@ class ScoreCalculator:
         for called_tile in self.called_tiles:
             if called_tile[0] in DRAGONS:
                 n += 1
-            if called_tile[0] == self.prevailing_wind:
+            if called_tile[0] == self._prevailing_wind:
                 n += 1
-            if called_tile[0] == self.dealer_wind:
+            if called_tile[0] == self._dealer_wind:
                 n += 1
         combination = self.combinations[0]
         for tiles in combination:
@@ -244,14 +245,16 @@ class ScoreCalculator:
                 tile = tiles[0]
                 if tile in DRAGONS:
                     n += 1
-                if tile == self.prevailing_wind:
+                if tile == self._prevailing_wind:
                     n += 1
-                if tile == self.dealer_wind:
+                if tile == self._dealer_wind:
                     n += 1
         return n
 
     def sequence_hand(self):
         """平和（门清限定）"""
+        if not self._is_concealed_hand:
+            return np.array([0])
         values = []
         for combination in self.combinations:
             value = self._is_sequence_hand(combination)
@@ -262,6 +265,8 @@ class ScoreCalculator:
 
     def seven_pairs(self):
         """七对子（门清限定）"""
+        if not self._is_concealed_hand:
+            return np.array([0])
         values = []
         for combination in self.combinations:
             values.append(self._is_seven_pairs(combination))
@@ -288,7 +293,7 @@ class ScoreCalculator:
 
     def small_three_dragons(self):
         """小三元"""
-        counter = Counter(self.tiles)
+        counter = Counter(self._tiles)
         if (counter[31] == 2 and counter[32] >= 3 and counter[33] >= 3) or\
                (counter[31] >= 3 and counter[32] == 2 and counter[33] >= 3) or \
                (counter[31] >= 3 and counter[32] >= 3 and counter[33] == 2):
@@ -303,7 +308,7 @@ class ScoreCalculator:
             s = 0
             for tiles in combination:
                 if self.checker.is_triplet(tiles):
-                    if self.hu_tile != tiles[0] or self.is_self_draw or self.hand_counter[self.hu_tile] == 4:
+                    if self.hu_tile != tiles[0] or self._is_self_draw or self._hand_counter[self.hu_tile] == 4:
                         s += 1
             if s + consealed_kong_count == 3:
                 values.append(2)
@@ -312,7 +317,7 @@ class ScoreCalculator:
         return np.array(values)
 
     def pure_straight(self):
-        """一气通贯"""
+        """一气通贯(副露减一番)"""
         values = []
         called_seqs = list(filter(self.checker.is_seq, self.called_tiles))
         called_seq_start_tiles = list(map(lambda x: x[0], called_seqs))
@@ -324,24 +329,24 @@ class ScoreCalculator:
                 continue
             seq_start_tiles.sort()
             if seq_start_tiles[0] + 3 in seq_start_tiles and seq_start_tiles[0] + 6 in seq_start_tiles:
-                values.append(2)
+                values.append(2 - self._kuisagari)
             elif seq_start_tiles[1] + 3 in seq_start_tiles and seq_start_tiles[1] + 6 in seq_start_tiles:
-                values.append(2)
+                values.append(2 - self._kuisagari)
             else:
                 values.append(0)
         return np.array(values)
 
     def all_mixed_terminals(self):
         """混老头"""
-        if self.tiles_set.isdisjoint(HONORS):
+        if self._tiles_set.isdisjoint(HONORS):
             return 0
-        if self.tiles_set.issubset(TERMINALS_HONORS) and not self.thirteen_orphans():
+        if self._tiles_set.issubset(TERMINALS_HONORS) and not self.thirteen_orphans():
             return 2
         return 0
 
     def mixed_outside_hand(self):
-        """混全带幺九"""
-        if self.tiles_set.isdisjoint(HONORS):
+        """混全带幺九(副露减一番)"""
+        if self._tiles_set.isdisjoint(HONORS):
             return np.zeros(shape=len(self.combinations))
         for called_tile in self.called_tiles:
             if not called_tile[0] in TERMINALS_HONORS and not called_tile[-1] in TERMINALS_HONORS:
@@ -353,11 +358,11 @@ class ScoreCalculator:
                     values.append(0)
                     break
             else:
-                values.append(2)
+                values.append(2 - self._kuisagari)
         return np.array(values)
 
     def mixed_triple_chow(self):
-        """三色同顺"""
+        """三色同顺(副露减一番)"""
         values = []
         called_seqs = list(filter(self.checker.is_seq, self.called_tiles))
         called_seq_start_tiles = list(map(lambda x: x[0], called_seqs))
@@ -369,9 +374,9 @@ class ScoreCalculator:
                 continue
             seq_start_tiles.sort()
             if seq_start_tiles[0] + 9 in seq_start_tiles and seq_start_tiles[0] + 18 in seq_start_tiles:
-                values.append(2)
+                values.append(2 - self._kuisagari)
             elif seq_start_tiles[1] + 9 in seq_start_tiles and seq_start_tiles[1] + 18 in seq_start_tiles:
-                values.append(2)
+                values.append(2 - self._kuisagari)
             else:
                 values.append(0)
         return np.array(values)
@@ -399,16 +404,18 @@ class ScoreCalculator:
     """三番"""
 
     def mixed_pure_hand(self):
-        """混一色"""
-        if self.tiles_set.isdisjoint(HONORS):
+        """混一色(副露减一番)"""
+        if self._tiles_set.isdisjoint(HONORS):
             return False
-        rm_honor = self.tiles_set.difference(HONORS)
+        rm_honor = self._tiles_set.difference(HONORS)
         if rm_honor.issubset(CHARACTERS) or rm_honor.issubset(DOTS) or rm_honor.issubset(BAMBOOS):
-            return 3
+            return 3 - self._kuisagari
         return 0
 
     def twice_pure_double_chows(self):
         """二杯口（门清限定）"""
+        if not self._is_concealed_hand:
+            return np.array([0])
         values = []
         for combination in self.combinations:
             seqs = set()
@@ -427,7 +434,7 @@ class ScoreCalculator:
         return np.array(values)
 
     def outside_hand(self):
-        """全纯带幺九"""
+        """全纯带幺九(副露减一番)"""
         for called_tile in self.called_tiles:
             if not called_tile[0] in TERMINALS and not called_tile[-1] in TERMINALS:
                 return np.zeros(shape=len(self.combinations))
@@ -438,28 +445,30 @@ class ScoreCalculator:
                     values.append(0)
                     break
             else:
-                values.append(3)
+                values.append(3 - self._kuisagari)
         return np.array(values)
 
     """六番"""
 
     def pure_hand(self):
-        """清一色"""
-        if self.tiles_set.issubset(CHARACTERS) or self.tiles_set.issubset(DOTS) or self.tiles_set.issubset(BAMBOOS):
-            return 6
+        """清一色(副露减一番)"""
+        if self._tiles_set.issubset(CHARACTERS) or self._tiles_set.issubset(DOTS) or self._tiles_set.issubset(BAMBOOS):
+            return 6 - self._kuisagari
         return 0
 
     """役满"""
 
     def four_concealed_triplets(self):
         """四暗刻、四暗刻单骑（门清限定）"""
+        if not self._is_concealed_hand:
+            return 0
         consealed_kong_count = sum(map(self.checker.is_concealed_kong, self.called_tiles))
         for i, combination in enumerate(self.combinations):
             s = 0
             is_tanki = False
             for tiles in combination:
                 if self.checker.is_triplet(tiles):
-                    if self.hu_tile != tiles[0] or self.is_self_draw:
+                    if self.hu_tile != tiles[0] or self._is_self_draw:
                         s += 1
                 if self.checker.is_pair(tiles) and self.hu_tile == tiles[0]:
                     is_tanki = True
@@ -472,8 +481,10 @@ class ScoreCalculator:
 
     def thirteen_orphans(self):
         """国士无双（十三面）（门清限定）"""
-        if self.tiles_set == TERMINALS_HONORS and len(self.hand_tiles) == 14:
-            if self.tiles.count(self.hu_tile) > 1:
+        if not self._is_concealed_hand:
+            return 0
+        if self._tiles_set == TERMINALS_HONORS and len(self.hand_tiles) == 14:
+            if self._tiles.count(self.hu_tile) > 1:
                 """国士十三面"""
                 return 26
             return 13
@@ -487,20 +498,20 @@ class ScoreCalculator:
 
     def big_three_dragons(self):
         """大三元"""
-        counter = Counter(self.tiles)
+        counter = Counter(self._tiles)
         if all(counter[i] >= 3 for i in DRAGONS):
             return 13
         return 0
 
     def all_green(self):
         """绿一色"""
-        if self.tiles_set.issubset(GREENS):
+        if self._tiles_set.issubset(GREENS):
             return 13
         return 0
 
     def all_honors(self):
         """字一色"""
-        if self.tiles_set.issubset(HONORS):
+        if self._tiles_set.issubset(HONORS):
             return 13
         return 0
 
@@ -526,14 +537,16 @@ class ScoreCalculator:
 
     def all_terminals(self):
         """清老头"""
-        if self.tiles_set.issubset(TERMINALS):
+        if self._tiles_set.issubset(TERMINALS):
             return 13
         return 0
 
     def nine_gates(self):
         """（纯正）九莲宝灯（门清限定）"""
-        d = copy(self.hand_counter)
-        first_tile = self.tiles[0]
+        if not self._is_concealed_hand:
+            return 0
+        d = copy(self._hand_counter)
+        first_tile = self._tiles[0]
         if first_tile not in [0, 9, 18]:
             return 0
         d[first_tile] -= 3
@@ -554,7 +567,7 @@ class ScoreCalculator:
             return np.array([25])
         values = []
         fixed_value = 20
-        if self.is_concealed_hand() and not self.is_self_draw:
+        if self._is_concealed_hand and not self._is_self_draw:
             fixed_value += 10
 
         for called_tiles in self.called_tiles:
@@ -584,21 +597,21 @@ class ScoreCalculator:
                 """平和没有其他附加的符"""
                 values.append(value)
                 continue
-            if self.is_self_draw:
+            if self._is_self_draw:
                 value += 2
             for tiles in combination:
                 if self.checker.is_triplet(tiles):
                     exposed_divide = 1
-                    if tiles[0] == self.hu_tile and not self.is_self_draw and self.hand_counter[self.hu_tile] == 3:
+                    if tiles[0] == self.hu_tile and not self._is_self_draw and self._hand_counter[self.hu_tile] == 3:
                         exposed_divide = 2
                     if tiles[0] in TERMINALS_HONORS:
                         value += 8 / exposed_divide
                     else:
                         value += 4 / exposed_divide
                 if self.checker.is_pair(tiles):
-                    if tiles[0] == self.prevailing_wind:
+                    if tiles[0] == self._prevailing_wind:
                         value += 2
-                    if tiles[0] == self.dealer_wind:
+                    if tiles[0] == self._dealer_wind:
                         value += 2
                     if tiles[0] in DRAGONS:
                         value += 2
@@ -622,7 +635,6 @@ class ScoreCalculator:
         """计算番数"""
         yaku_list: List[str] = []
         full = 0
-        is_concealed_hand = self.is_concealed_hand()
         fu = self.fussu()
         if self._is_blessing_of_heaven:
             yaku_list.append('天和(役满)')
@@ -658,31 +670,30 @@ class ScoreCalculator:
         if n != 0:
             yaku_list.append('清老头(役满)')
             full += 1
-        if is_concealed_hand:
-            n = self.four_concealed_triplets()
-            if n != 0:
-                if n == 26:
-                    yaku_list.append('四暗刻单骑(2倍役满)')
-                    full += 2
-                else:
-                    yaku_list.append('四暗刻(役满)')
-                    full += 1
-            n = self.thirteen_orphans()
-            if n != 0:
-                if n == 26:
-                    yaku_list.append('国士无双十三面(2倍役满)')
-                    full += 2
-                else:
-                    yaku_list.append('国士无双(役满)')
-                    full += 1
-            n = self.nine_gates()
-            if n != 0:
-                if n == 26:
-                    yaku_list.append('纯正九莲宝灯(2倍役满)')
-                    full += 2
-                else:
-                    yaku_list.append('九莲宝灯(役满)')
-                    full += 1
+        n = self.four_concealed_triplets()
+        if n != 0:
+            if n == 26:
+                yaku_list.append('四暗刻单骑(2倍役满)')
+                full += 2
+            else:
+                yaku_list.append('四暗刻(役满)')
+                full += 1
+        n = self.thirteen_orphans()
+        if n != 0:
+            if n == 26:
+                yaku_list.append('国士无双十三面(2倍役满)')
+                full += 2
+            else:
+                yaku_list.append('国士无双(役满)')
+                full += 1
+        n = self.nine_gates()
+        if n != 0:
+            if n == 26:
+                yaku_list.append('纯正九莲宝灯(2倍役满)')
+                full += 2
+            else:
+                yaku_list.append('九莲宝灯(役满)')
+                full += 1
         if full:
             fu = np.max(fu)
             if self.max_score_index is None:
@@ -691,7 +702,7 @@ class ScoreCalculator:
         number = np.zeros(shape=len(self.combinations))
         common_yaku_list = []
         if self._is_under_the_sea:
-            if self.is_self_draw:
+            if self._is_self_draw:
                 common_yaku_list.append('海底捞月(1番)')
             else:
                 common_yaku_list.append('河底捞鱼(1番)')
@@ -703,38 +714,37 @@ class ScoreCalculator:
             common_yaku_list.append('抢杠(1番)')
             number += 1
         yaku_list: List[List[str]] = [[] for _ in self.combinations]
-        if is_concealed_hand:
-            number += self._lichi
-            if self._lichi == 1:
-                common_yaku_list.append('立直(1番)')
-            elif self._lichi == 2:
-                common_yaku_list.append('两立直(2番)')
-            if self._ippatsu:
-                common_yaku_list.append('一发(1番)')
-                number += 1
-            if self.is_self_draw:
-                common_yaku_list.append('门前清自摸和(1番)')
-                number += 1
+        number += self._lichi
+        if self._lichi == 1:
+            common_yaku_list.append('立直(1番)')
+        elif self._lichi == 2:
+            common_yaku_list.append('两立直(2番)')
+        if self._ippatsu:
+            common_yaku_list.append('一发(1番)')
+            number += 1
+        if self._is_self_draw:
+            common_yaku_list.append('门前清自摸和(1番)')
+            number += 1
 
-            values = self.pure_double_chow()
-            for i in np.where(values != 0)[0]:
-                yaku_list[i].append('一杯口(1番)')
-            number += values
+        values = self.pure_double_chow()
+        for i in np.where(values != 0)[0]:
+            yaku_list[i].append('一杯口(1番)')
+        number += values
 
-            values = self.sequence_hand()
-            for i in np.where(values != 0)[0]:
-                yaku_list[i].append('平和(1番)')
-            number += values
+        values = self.sequence_hand()
+        for i in np.where(values != 0)[0]:
+            yaku_list[i].append('平和(1番)')
+        number += values
 
-            values = self.seven_pairs()
-            for i in np.where(values != 0)[0]:
-                yaku_list[i].append('七对子(2番)')
-            number += values
+        values = self.seven_pairs()
+        for i in np.where(values != 0)[0]:
+            yaku_list[i].append('七对子(2番)')
+        number += values
 
-            values = self.twice_pure_double_chows()
-            for i in np.where(values != 0)[0]:
-                yaku_list[i].append('二杯口(3番)')
-            number += values
+        values = self.twice_pure_double_chows()
+        for i in np.where(values != 0)[0]:
+            yaku_list[i].append('二杯口(3番)')
+        number += values
 
         n = self.all_simple()
         if n != 0:
@@ -767,13 +777,8 @@ class ScoreCalculator:
         number += values
 
         values = self.pure_straight()
-        if not is_concealed_hand:
-            values[np.where(values != 0)] -= 1
-            for i in np.where(values != 0)[0]:
-                yaku_list[i].append('一气通贯(1番)')
-        else:
-            for i in np.where(values != 0)[0]:
-                yaku_list[i].append('一气通贯(2番)')
+        for i in np.where(values != 0)[0]:
+            yaku_list[i].append(f'一气通贯({np.max(values)}番)')
         number += values
 
         n = self.all_mixed_terminals()
@@ -782,23 +787,13 @@ class ScoreCalculator:
         number += n
 
         values = self.mixed_outside_hand()
-        if not is_concealed_hand:
-            values[np.where(values != 0)] -= 1
-            for i in np.where(values != 0)[0]:
-                yaku_list[i].append('混全带幺九(1番)')
-        else:
-            for i in np.where(values != 0)[0]:
-                yaku_list[i].append('混全带幺九(2番)')
+        for i in np.where(values != 0)[0]:
+            yaku_list[i].append(f'混全带幺九({np.max(values)}番)')
         number += values
 
         values = self.mixed_triple_chow()
-        if not is_concealed_hand:
-            values[np.where(values != 0)] -= 1
-            for i in np.where(values != 0)[0]:
-                yaku_list[i].append('三色同顺(1番)')
-        else:
-            for i in np.where(values != 0)[0]:
-                yaku_list[i].append('三色同顺(2番)')
+        for i in np.where(values != 0)[0]:
+            yaku_list[i].append(f'三色同顺({np.max(values)}番)')
         number += values
 
         values = self.triple_pungs()
@@ -808,25 +803,15 @@ class ScoreCalculator:
 
         n = self.mixed_pure_hand()
         if n != 0:
-            if not is_concealed_hand:
-                n -= 1
             common_yaku_list.append(f'混一色({n}番)')
-        number += n
 
         values = self.outside_hand()
-        if not is_concealed_hand:
-            values[np.where(values != 0)] -= 1
-            for i in np.where(values != 0)[0]:
-                yaku_list[i].append('纯全带幺九(2番)')
-        else:
-            for i in np.where(values != 0)[0]:
-                yaku_list[i].append('纯全带幺九(3番)')
+        for i in np.where(values != 0)[0]:
+            yaku_list[i].append(f'纯全带幺九({np.max(values)}番)')
         number += values
 
         n = self.pure_hand()
         if n != 0:
-            if not is_concealed_hand:
-                n -= 1
             common_yaku_list.append(f'清一色({n}番)')
         number += n
         number += self._dora
@@ -865,7 +850,7 @@ class ScoreCalculator:
 if __name__ == '__main__':
     calculator = ScoreCalculator()
     calculator.update(
-        tiles='19m19s19p1234567z7z',
+        tiles='19m19s19p1234567z7z 123z',
         prevailing_wind=2,
         dealer_wind=1,
         is_self_draw=0,
