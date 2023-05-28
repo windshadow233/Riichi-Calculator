@@ -19,16 +19,19 @@ st.markdown(
     unsafe_allow_html=True,
 )
 with st.form(key="mahjong"):
-    tiles = st.text_input(
-        label="牌面",
-        help="请按照以下格式书写牌面字符串: "
-             "其中，万、饼、索、字分别用数字1-9加上字母'm'、'p'、's'、'z'进行表示。"
-             "東南西北白發中分别用1z-7z表示。"
-             "和牌计算中，手牌最后一张必须是和了牌，并且需单独写出。"
-             "副露以空格分隔，写在手牌后，如果是暗杠，则写五次对应的数字。"
-             "例如, 若和牌者的手牌有三萬、五萬、两个一饼，和了牌是四萬，副露为一二三饼的顺子、白板的暗杠以及六索的明杠，则应输入下面的字符串: "
-             "35m11p4m 123p 55555z 6666s"
-    ).strip()
+    col1, col2 = st.columns([4, 1])
+    with col1:
+        tiles = st.text_input(
+            label="牌面",
+            help="请按照以下格式书写牌面字符串: "
+                 "其中，万、饼、索、字分别用数字1-9加上字母'm'、'p'、's'、'z'进行表示。"
+                 "東南西北白發中分别用1z-7z表示。"
+                 "副露以空格分隔，写在手牌后，如果是暗杠，则写五次对应的数字。"
+                 "例如, 若和牌者的手牌有三萬、五萬、两个一饼，和了牌是四萬，副露为一二三饼的顺子、白板的暗杠以及六索的明杠，则应输入下面的字符串: "
+                 "35m11p4m 123p 55555z 6666s"
+        ).strip()
+    with col2:
+        hu_tile = st.text_input(label="和了牌", help="表示方法与'牌面'相同，只需填入一张牌（听牌计算时不需要填写）")
     col1, col2 = st.columns(2)
     with col1:
         prevailing_wind_str = st.radio(
@@ -104,6 +107,7 @@ with st.form(key="mahjong"):
         try:
             calculator.update(
                 tiles=tiles,
+                hu_tile=hu_tile,
                 prevailing_wind=prevailing_wind,
                 dealer_wind=dealer_wind,
                 is_self_draw=is_self_draw,
@@ -178,6 +182,9 @@ with st.form(key="mahjong"):
         btn2 = st.form_submit_button(label="听牌计算")
 
     if btn1:
+        if len(hu_tile) != 2:
+            st.error("请正确填写和了牌")
+            st.stop()
         calculate()
     elif btn2:
         try:
