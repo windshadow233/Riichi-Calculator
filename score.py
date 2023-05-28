@@ -56,6 +56,7 @@ class ScoreCalculator:
     def update(
             self,
             tiles: str,
+            hu_tile: str,
             prevailing_wind,
             dealer_wind,
             is_self_draw,
@@ -74,7 +75,8 @@ class ScoreCalculator:
         索子:1-9s
         东南西北:1-4z
         白发中:5-7z
-        :param tiles: 手牌字符串，若有副露则以空格隔离，手牌最后一张为和了牌，例：19m19p19s1234567z1m，1233m3m 5555m 789m 123m
+        :param tiles: 手牌字符串，若有副露则以空格隔离，例：19m19p19s1234567z，1233m 5555m 789m 123m
+        :param hu_tile: 和了牌
         :param prevailing_wind: 场风 (东:1, 南:2, 西:3, 北:4)
         :param dealer_wind: 自风 (同上)
         :param is_self_draw: 是否自摸
@@ -88,11 +90,9 @@ class ScoreCalculator:
         :param is_blessing_of_earth: 是否为地和(以子家自摸和为前提)
         """
         self.tiles_str = tiles
-        try:
-            self.hu_tile = self.checker.str2id(re.search('(?:[1-9]+[mpsz])+([1-9][mpsz])', tiles).groups()[0])[0][0]
-        except:
-            raise ValueError("No hu tile")
+        self.hu_tile = self.checker.str2id(hu_tile)[0][0]
         self.hand_tiles, self.called_tiles = self.checker.str2id(self.tiles_str)
+        self.hand_tiles.append(self.hu_tile)
         self._hand_counter = Counter(self.hand_tiles)
         self._tiles = self.hand_tiles + sum(self.called_tiles, [])
         self._tiles_set = set(self._tiles)
@@ -864,7 +864,8 @@ class ScoreCalculator:
 if __name__ == '__main__':
     calculator = ScoreCalculator()
     calculator.update(
-        tiles='19m19p19s1234567z7z',
+        tiles='19m19p19s1234567z',
+        hu_tile='7z',
         prevailing_wind=2,
         dealer_wind=1,
         is_self_draw=1,
