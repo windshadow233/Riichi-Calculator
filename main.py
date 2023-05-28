@@ -13,6 +13,7 @@ st.markdown(
 [data-testid="stMetricValue"] {
     font-size: 30px;
 }
+.css-15zrgzn {display: none}
 </style>
 """,
     unsafe_allow_html=True,
