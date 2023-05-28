@@ -564,7 +564,7 @@ class ScoreCalculator:
     def fussu(self):
         """计算符数"""
         if self.thirteen_orphans():
-            """国士无双固定25符"""
+            """国士无双固定为25符"""
             return np.array([25])
         values = []
         fixed_value = 20
@@ -591,17 +591,17 @@ class ScoreCalculator:
             value = fixed_value
             wait_form = None
             if self._is_seven_pairs(combination):
-                """七对子固定25符"""
+                """七对子固定为25符"""
                 values.append(25)
                 continue
-            elif self._is_sequence_hand(combination):
-                """平和型手牌"""
-                if not self.called_tiles:
-                    """平和没有其他附加的符"""
-                    values.append(value)
-                    continue
-                else:
-                    if fixed_value == 20:
+            if fixed_value == 20:
+                if self._is_sequence_hand(combination):
+                    """平和型手牌"""
+                    if not self.called_tiles:
+                        """平和没有其他附加的符"""
+                        values.append(value)
+                        continue
+                    else:
                         """副露平和型固定为30符"""
                         values.append(30)
                         continue
