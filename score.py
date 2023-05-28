@@ -168,9 +168,7 @@ class ScoreCalculator:
         return s
 
     def _is_sequence_hand(self, combination):
-        """判断某一种组合是否满足平和"""
-        if len(combination) != 5:
-            return 0
+        """判断某一种组合是否满足平和（可非门前）"""
         two_sided_wait = False
         for tiles in combination:
             if self.checker.is_triplet(tiles):
@@ -253,10 +251,13 @@ class ScoreCalculator:
 
     def sequence_hand(self):
         """平和（门清限定）"""
-        if not self._is_concealed_hand:
+        if self.called_tiles:
             return np.array([0])
         values = []
         for combination in self.combinations:
+            if len(combination) != 5:
+                values.append(0)
+                continue
             value = self._is_sequence_hand(combination)
             values.append(value)
         return np.array(values)
@@ -265,7 +266,7 @@ class ScoreCalculator:
 
     def seven_pairs(self):
         """七对子（门清限定）"""
-        if not self._is_concealed_hand:
+        if self.called_tiles:
             return np.array([0])
         values = []
         for combination in self.combinations:
@@ -593,10 +594,17 @@ class ScoreCalculator:
                 """七对子固定25符"""
                 values.append(25)
                 continue
-            if self._is_sequence_hand(combination):
-                """平和没有其他附加的符"""
-                values.append(value)
-                continue
+            elif self._is_sequence_hand(combination):
+                """平和型手牌"""
+                if not self.called_tiles:
+                    """平和没有其他附加的符"""
+                    values.append(value)
+                    continue
+                else:
+                    if fixed_value == 20:
+                        """副露平和型固定为30符"""
+                        values.append(30)
+                        continue
             if self._is_self_draw:
                 value += 2
             for tiles in combination:
