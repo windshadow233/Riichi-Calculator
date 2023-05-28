@@ -97,6 +97,8 @@ class ScoreCalculator:
         self._tiles = self.hand_tiles + sum(self.called_tiles, [])
         self._tiles_set = set(self._tiles)
         self.is_hu = False
+        if not 18 >= len(self._tiles) >= 14:
+            return
         self.combinations = list(self.checker.search_combinations(self.hand_tiles, len(self.called_tiles)))
         if self.called_tiles:
             if self.checker.check_called_tiles(self.called_tiles):
@@ -862,7 +864,7 @@ class ScoreCalculator:
 if __name__ == '__main__':
     calculator = ScoreCalculator()
     calculator.update(
-        tiles='5677p111678s7p 5555z',
+        tiles='19m19p19s1234567z7z',
         prevailing_wind=2,
         dealer_wind=1,
         is_self_draw=1,
