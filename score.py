@@ -28,6 +28,7 @@ class ScoreCalculator:
         self.tiles_str = ''
         self.checker = Mahjong()
         self._hand_counter = None
+        self._counter = None
         self._tiles = []
         self._tiles_set = set()
         self._is_concealed_hand = None
@@ -95,7 +96,13 @@ class ScoreCalculator:
         self.hand_tiles, self.called_tiles = self.checker.str2id(self.tiles_str)
         self.hand_tiles.append(self.hu_tile)
         self._hand_counter = Counter(self.hand_tiles)
-        self._tiles = self.hand_tiles + sum(self.called_tiles, [])
+        self._tiles += self.hand_tiles
+        for meld in self.called_tiles:
+            if self.checker.is_concealed_kong(meld):
+                self._tiles += [meld[0]] * 4
+            else:
+                self._tiles += meld
+        self._counter = Counter(self._tiles)
         self._tiles_set = set(self._tiles)
         self.is_hu = False
         if not 18 >= len(self._tiles) >= 14:
@@ -297,10 +304,9 @@ class ScoreCalculator:
 
     def small_three_dragons(self):
         """小三元"""
-        counter = Counter(self._tiles)
-        if (counter[31] == 2 and counter[32] >= 3 and counter[33] >= 3) or\
-               (counter[31] >= 3 and counter[32] == 2 and counter[33] >= 3) or \
-               (counter[31] >= 3 and counter[32] >= 3 and counter[33] == 2):
+        if (self._counter[31] == 2 and self._counter[32] >= 3 and self._counter[33] >= 3) or\
+               (self._counter[31] >= 3 and self._counter[32] == 2 and self._counter[33] >= 3) or \
+               (self._counter[31] >= 3 and self._counter[32] >= 3 and self._counter[33] == 2):
             return 2
         return 0
 
@@ -502,8 +508,7 @@ class ScoreCalculator:
 
     def big_three_dragons(self):
         """大三元"""
-        counter = Counter(self._tiles)
-        if all(counter[i] >= 3 for i in DRAGONS):
+        if all(self._counter[i] >= 3 for i in DRAGONS):
             return 13
         return 0
 
@@ -868,8 +873,8 @@ class ScoreCalculator:
 if __name__ == '__main__':
     calculator = ScoreCalculator()
     calculator.update(
-        tiles='19m19p19s1234567z',
-        hu_tile='7z',
+        tiles='5z 11111z 22222z 33333z 44444z',
+        hu_tile='5z',
         prevailing_wind=2,
         dealer_wind=1,
         is_self_draw=1,
