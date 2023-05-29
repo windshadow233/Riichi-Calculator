@@ -88,7 +88,7 @@ class ScoreCalculator:
         :param is_under_the_sea: 是否为海底捞月、河底捞鱼
         :param is_after_a_kong: 是否为岭上开花(当is_self_draw为False或副露无杠时,此参数无效)
         :param is_robbing_the_kong: 是否为抢杠(当is_self_draw为True或手牌有此牌时,此参数无效)
-        :param is_blessing_of_heaven: 是否为天和(非「亲家门清自摸和」时,此参数无效)
+        :param is_blessing_of_heaven: 是否为天和(非「亲家无副露自摸和」时,此参数无效)
         :param is_blessing_of_earth: 是否为地和(非「子家无副露自摸和」时,此参数无效)
         """
         self.is_hu = False
@@ -127,7 +127,7 @@ class ScoreCalculator:
         self._is_under_the_sea = is_under_the_sea
         self._is_after_a_kong = is_after_a_kong and is_self_draw and any(self.checker.is_kong(_) for _ in self.called_tiles)
         self._is_robbing_the_kong = is_robbing_the_kong and not is_self_draw and self._counter[self.hu_tile] == 1
-        self._is_blessing_of_heaven = is_blessing_of_heaven and dealer_wind == 1 and is_self_draw and self._is_concealed_hand
+        self._is_blessing_of_heaven = is_blessing_of_heaven and dealer_wind == 1 and is_self_draw and not self.called_tiles
         self._is_blessing_of_earth = is_blessing_of_earth and dealer_wind != 1 and is_self_draw and not self.called_tiles
 
         if self.is_hu:
@@ -409,7 +409,7 @@ class ScoreCalculator:
     def mixed_pure_hand(self):
         """混一色(副露减一番)"""
         if self._tiles_set.isdisjoint(HONORS):
-            return False
+            return 0
         rm_honor = self._tiles_set.difference(HONORS)
         if rm_honor.issubset(CHARACTERS) or rm_honor.issubset(DOTS) or rm_honor.issubset(BAMBOOS):
             return 3 - self._kuisagari
