@@ -135,6 +135,9 @@ with st.form(key="mahjong"):
                     st.info(calculator.called_string())
                 st.write("役种、宝牌")
                 st.info(''.join([f'〖{yaku}〗' for yaku in calculator.yaku_list]))
+                if not calculator.has_yaku:
+                    st.warning("无役")
+                    return
                 col1, col2, col3, col4 = st.columns(4)
                 with col1:
                     st.metric(
@@ -173,7 +176,7 @@ with st.form(key="mahjong"):
                 st.info(score_info)
             else:
                 st.warning("没有和牌")
-        except:
+        except ValueError:
             st.error("输入有误")
 
 
