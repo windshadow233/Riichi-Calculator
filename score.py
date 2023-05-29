@@ -88,8 +88,8 @@ class ScoreCalculator:
         :param is_under_the_sea: 是否为海底捞月、河底捞鱼
         :param is_after_a_kong: 是否为岭上开花(当is_self_draw为False或副露无杠时,此参数无效)
         :param is_robbing_the_kong: 是否为抢杠(当is_self_draw为True或手牌有此牌时,此参数无效)
-        :param is_blessing_of_heaven: 是否为天和(非亲家门清自摸和时,此参数无效)
-        :param is_blessing_of_earth: 是否为地和(非子家无副露自摸和时,此参数无效)
+        :param is_blessing_of_heaven: 是否为天和(非「亲家门清自摸和」时,此参数无效)
+        :param is_blessing_of_earth: 是否为地和(非「子家无副露自摸和」时,此参数无效)
         """
         self.is_hu = False
         self.tiles_str = tiles
