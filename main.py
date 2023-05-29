@@ -1,3 +1,5 @@
+import re
+
 import streamlit as st
 from score import ScoreCalculator, ID2NAME
 import math
@@ -182,7 +184,7 @@ with st.form(key="mahjong"):
         btn2 = st.form_submit_button(label="听牌计算")
 
     if btn1:
-        if len(hu_tile) != 2:
+        if not re.match('(:?[1-9][mps])|(:?[1-7]z)', hu_tile):
             st.error("请正确填写和了牌")
             st.stop()
         calculate()
