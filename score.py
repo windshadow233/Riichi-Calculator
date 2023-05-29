@@ -174,7 +174,7 @@ class ScoreCalculator:
         return s
 
     def _is_sequence_hand(self, combination):
-        """判断某一种组合是否满足平和（可非门前）"""
+        """判断某一种组合是否满足平和(可非门清)"""
         two_sided_wait = False
         for tiles in combination:
             if self.checker.is_triplet(tiles):
@@ -218,16 +218,13 @@ class ScoreCalculator:
         if not self._is_concealed_hand:
             return np.array([0])
         for combination in self.combinations:
-            seqs = set()
-            s = 0
-            for tiles in combination:
-                if self.checker.is_seq(tiles):
-                    if tiles in seqs:
-                        s += 1
-                        seqs.remove(tiles)
-                    else:
-                        seqs.add(tiles)
-            if s == 1:
+            seqs = filter(self.checker.is_seq, combination)
+            seq_start_tiles = [_[0] for _ in seqs]
+            count = Counter(seq_start_tiles)
+            if max(count.values()) == 4:
+                values.append(0)
+                continue
+            if sum(map(lambda x: x >= 2, count.values())) == 1:
                 values.append(1)
             else:
                 values.append(0)
@@ -256,7 +253,7 @@ class ScoreCalculator:
         return n
 
     def sequence_hand(self):
-        """平和（门清限定）"""
+        """平和(门清限定)"""
         if self._has_furu:
             return np.array([0])
         values = []
@@ -271,7 +268,7 @@ class ScoreCalculator:
     """二番"""
 
     def seven_pairs(self):
-        """七对子（门清限定）"""
+        """七对子(门清限定)"""
         if self._has_furu:
             return np.array([0])
         values = []
@@ -419,20 +416,14 @@ class ScoreCalculator:
 
     def twice_pure_double_chows(self):
         """二杯口（门清限定）"""
-        if not self._is_concealed_hand:
+        if self._has_furu:
             return np.array([0])
         values = []
         for combination in self.combinations:
-            seqs = set()
-            s = 0
-            for tiles in combination:
-                if self.checker.is_seq(tiles):
-                    if tiles in seqs:
-                        s += 1
-                        seqs.remove(tiles)
-                    else:
-                        seqs.add(tiles)
-            if s == 2:
+            seqs = filter(self.checker.is_seq, combination)
+            seq_start_tiles = [_[0] for _ in seqs]
+            count = Counter(seq_start_tiles)
+            if list(count.values()) in [[2, 2], [4]]:
                 values.append(3)
             else:
                 values.append(0)
