@@ -46,6 +46,7 @@ class ScoreCalculator:
         self._is_blessing_of_earth = None
 
         self.hu_tile = None
+        self.has_yaku = False
         self.hand_tiles, self.called_tiles = [], []
         self.is_hu = False
         self.combinations = []
@@ -123,10 +124,10 @@ class ScoreCalculator:
         self._dora = dora
         self._ippatsu = ippatsu and bool(lichi)
         self._is_under_the_sea = is_under_the_sea
-        self._is_after_a_kong = is_after_a_kong and is_self_draw
+        self._is_after_a_kong = is_after_a_kong and is_self_draw and any(self.checker.is_kong(_) for _ in self.called_tiles)
         self._is_robbing_the_kong = is_robbing_the_kong and not is_self_draw
-        self._is_blessing_of_heaven = is_blessing_of_heaven and dealer_wind == 1 and is_self_draw
-        self._is_blessing_of_earth = is_blessing_of_earth and dealer_wind != 1 and is_self_draw
+        self._is_blessing_of_heaven = is_blessing_of_heaven and dealer_wind == 1 and is_self_draw and self._is_concealed_hand
+        self._is_blessing_of_earth = is_blessing_of_earth and dealer_wind != 1 and is_self_draw and not self.called_tiles
 
         if self.is_hu:
             self.fu, self.yaku_list, self.number, self.level, self.score = self.calculate()
@@ -705,6 +706,7 @@ class ScoreCalculator:
                 yaku_list.append('九莲宝灯(役满)')
                 full += 1
         if full:
+            self.has_yaku = True
             fu = np.max(fu)
             if self.max_score_index is None:
                 self.max_score_index = 0
@@ -835,6 +837,8 @@ class ScoreCalculator:
         yaku = yaku_list[i]
         score = score[i]
         number = number[i]
+        if number - self._dora > 0:
+            self.has_yaku = True
         if number < 5:
             if score > 2000:
                 score = 2000
