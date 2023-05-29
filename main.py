@@ -33,7 +33,7 @@ with st.form(key="mahjong"):
                  "'35m11p 123p 55555z 6666s'，并且在后面的'和了牌'一栏填写'4m'"
         ).strip()
     with col2:
-        hu_tile = st.text_input(label="和了牌", help="表示方法与'牌面'相同，只需填入一张牌（听牌计算时不需要填写）")
+        hu_tile = st.text_input(label="和了牌", help="表示方法与'牌面'相同，只填一张牌（听牌计算时不需要填写）")
     col1, col2 = st.columns(2)
     with col1:
         prevailing_wind_str = st.radio(
