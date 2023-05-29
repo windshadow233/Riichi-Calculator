@@ -280,11 +280,10 @@ class ScoreCalculator:
     def all_pungs(self):
         """对对和"""
         values = []
-        called_pong_count = sum(map(self.checker.is_triplet, self.called_tiles))
-        kong_count = sum(map(self.checker.is_kong, self.called_tiles))
+        called_pung_count = sum(map(lambda x: self.checker.is_triplet(x) or self.checker.is_kong(x), self.called_tiles))
         for combination in self.combinations:
             s = sum(map(self.checker.is_triplet, combination))
-            if s + called_pong_count + kong_count == 4:
+            if s + called_pung_count == 4:
                 values.append(2)
             else:
                 values.append(0)
@@ -389,10 +388,10 @@ class ScoreCalculator:
         """三色同刻"""
         values = []
         called_triplets = list(filter(lambda x: self.checker.is_triplet(x) or self.checker.is_kong(x), self.called_tiles))
-        called_triplets_tile = list(map(lambda x: x[0], called_triplets))
+        called_triplet_ids = list(map(lambda x: x[0], called_triplets))
         for combination in self.combinations:
             triplets = list(filter(self.checker.is_triplet, combination))
-            tiles = [_[0] for _ in triplets] + called_triplets_tile
+            tiles = [_[0] for _ in triplets] + called_triplet_ids
             if len(tiles) < 3:
                 values.append(0)
                 continue
