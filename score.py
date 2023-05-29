@@ -86,10 +86,10 @@ class ScoreCalculator:
         :param dora: 宝牌数量(包含宝牌、立直翻的里宝牌、赤宝牌)
         :param ippatsu: 是否为一发(当lichi为0时,此参数无效)
         :param is_under_the_sea: 是否为海底捞月、河底捞鱼
-        :param is_after_a_kong: 是否为岭上开花(当is_self_draw为False时,此参数无效)
-        :param is_robbing_the_kong: 是否为抢杠(当is_self_draw为True时,此参数无效)
-        :param is_blessing_of_heaven: 是否为天和(以亲家自摸和为前提)
-        :param is_blessing_of_earth: 是否为地和(以子家自摸和为前提)
+        :param is_after_a_kong: 是否为岭上开花(当is_self_draw为False或副露无杠时,此参数无效)
+        :param is_robbing_the_kong: 是否为抢杠(当is_self_draw为True或手牌有此牌时,此参数无效)
+        :param is_blessing_of_heaven: 是否为天和(非亲家门清自摸和时,此参数无效)
+        :param is_blessing_of_earth: 是否为地和(非子家无副露自摸和时,此参数无效)
         """
         self.is_hu = False
         self.tiles_str = tiles
@@ -126,7 +126,7 @@ class ScoreCalculator:
         self._ippatsu = ippatsu and bool(lichi)
         self._is_under_the_sea = is_under_the_sea
         self._is_after_a_kong = is_after_a_kong and is_self_draw and any(self.checker.is_kong(_) for _ in self.called_tiles)
-        self._is_robbing_the_kong = is_robbing_the_kong and not is_self_draw
+        self._is_robbing_the_kong = is_robbing_the_kong and not is_self_draw and self._counter[self.hu_tile] == 1
         self._is_blessing_of_heaven = is_blessing_of_heaven and dealer_wind == 1 and is_self_draw and self._is_concealed_hand
         self._is_blessing_of_earth = is_blessing_of_earth and dealer_wind != 1 and is_self_draw and not self.called_tiles
 
