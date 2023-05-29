@@ -108,15 +108,7 @@ class ScoreCalculator:
         if not 18 >= len(self._tiles) >= 14:
             return
         self.combinations = list(self.checker.search_combinations(self.hand_tiles, len(self.called_tiles)))
-        if self.called_tiles:
-            if self.checker.check_called_tiles(self.called_tiles):
-                self.combinations = list(filter(lambda x: len(x) + len(self.called_tiles) == 5, self.combinations))
-                if self.combinations:
-                    self.is_hu = True
-        else:
-            self.combinations = list(filter(lambda x: len(x) == 5 or len(x) == 7, self.combinations))
-            if self.combinations:
-                self.is_hu = True
+        self.is_hu = bool(self.combinations) and self.checker.check_called_tiles(self.called_tiles)
         self._is_concealed_hand = self.called_tiles == [] or all(self.checker.is_concealed_kong(_) for _ in self.called_tiles)
         self._kuisagari = 1 - self._is_concealed_hand
         if self.thirteen_orphans():
@@ -168,7 +160,7 @@ class ScoreCalculator:
         if self.is_hu:
             s += f'\n和了牌: {ID2NAME[self.hu_tile]}'
             s += f'\n符数: {self.fu}'
-            s += '\n役种、宝牌: ' + ' '.join(self.yaku_list)
+            s += '\n役种、宝牌: ' + '、'.join(self.yaku_list)
             s += f'\n番数: {self.number}'
             if self.level:
                 s += f' ==> {self.level}'
@@ -873,8 +865,8 @@ class ScoreCalculator:
 if __name__ == '__main__':
     calculator = ScoreCalculator()
     calculator.update(
-        tiles='5z 11111z 22222z 33333z 44444z',
-        hu_tile='5z',
+        tiles='112233448899m5s',
+        hu_tile='5s',
         prevailing_wind=2,
         dealer_wind=1,
         is_self_draw=1,
