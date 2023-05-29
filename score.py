@@ -91,6 +91,7 @@ class ScoreCalculator:
         :param is_blessing_of_heaven: 是否为天和(以亲家自摸和为前提)
         :param is_blessing_of_earth: 是否为地和(以子家自摸和为前提)
         """
+        self.is_hu = False
         self.tiles_str = tiles
         self.hu_tile = self.checker.str2id(hu_tile)[0][0]
         self.hand_tiles, self.called_tiles = self.checker.str2id(self.tiles_str)
@@ -103,8 +104,9 @@ class ScoreCalculator:
             else:
                 self._tiles += meld
         self._counter = Counter(self._tiles)
+        if any(n > 4 for n in self._counter.values()):
+            return
         self._tiles_set = set(self._tiles)
-        self.is_hu = False
         if not 18 >= len(self._tiles) >= 14:
             return
         self.combinations = list(self.checker.search_combinations(self.hand_tiles, len(self.called_tiles)))
@@ -865,8 +867,8 @@ class ScoreCalculator:
 if __name__ == '__main__':
     calculator = ScoreCalculator()
     calculator.update(
-        tiles='112233448899m5s',
-        hu_tile='5s',
+        tiles='1z 11111z 22222z 33333z 44444z',
+        hu_tile='1z',
         prevailing_wind=2,
         dealer_wind=1,
         is_self_draw=1,
