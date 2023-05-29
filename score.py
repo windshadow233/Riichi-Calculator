@@ -31,6 +31,7 @@ class ScoreCalculator:
         self._counter = None
         self._tiles = []
         self._tiles_set = set()
+        self._has_furu = None
         self._is_concealed_hand = None
         self._kuisagari = 0
 
@@ -111,7 +112,8 @@ class ScoreCalculator:
             return
         self.combinations = list(self.checker.search_combinations(self.hand_tiles, len(self.called_tiles)))
         self.is_hu = bool(self.combinations) and self.checker.check_called_tiles(self.called_tiles)
-        self._is_concealed_hand = self.called_tiles == [] or all(self.checker.is_concealed_kong(_) for _ in self.called_tiles)
+        self._has_furu = bool(self.called_tiles)
+        self._is_concealed_hand = not self._has_furu or all(self.checker.is_concealed_kong(_) for _ in self.called_tiles)
         self._kuisagari = 1 - self._is_concealed_hand
         if self.thirteen_orphans():
             self.is_hu = True
@@ -127,8 +129,8 @@ class ScoreCalculator:
         self._is_under_the_sea = is_under_the_sea
         self._is_after_a_kong = is_after_a_kong and is_self_draw and any(self.checker.is_kong(_) for _ in self.called_tiles)
         self._is_robbing_the_kong = is_robbing_the_kong and not is_self_draw and self._counter[self.hu_tile] == 1
-        self._is_blessing_of_heaven = is_blessing_of_heaven and dealer_wind == 1 and is_self_draw and not self.called_tiles
-        self._is_blessing_of_earth = is_blessing_of_earth and dealer_wind != 1 and is_self_draw and not self.called_tiles
+        self._is_blessing_of_heaven = is_blessing_of_heaven and dealer_wind == 1 and is_self_draw and not self._has_furu
+        self._is_blessing_of_earth = is_blessing_of_earth and dealer_wind != 1 and is_self_draw and not self._has_furu
 
         if self.is_hu:
             self.fu, self.yaku_list, self.number, self.level, self.score = self.calculate()
@@ -156,7 +158,7 @@ class ScoreCalculator:
             return ''
         s = "手牌: "
         s += self.hand_string()
-        if self.called_tiles:
+        if self._has_furu:
             s += '\n副露: '
             s += self.called_string()
         if self.is_hu:
@@ -255,7 +257,7 @@ class ScoreCalculator:
 
     def sequence_hand(self):
         """平和（门清限定）"""
-        if self.called_tiles:
+        if self._has_furu:
             return np.array([0])
         values = []
         for combination in self.combinations:
@@ -270,7 +272,7 @@ class ScoreCalculator:
 
     def seven_pairs(self):
         """七对子（门清限定）"""
-        if self.called_tiles:
+        if self._has_furu:
             return np.array([0])
         values = []
         for combination in self.combinations:
@@ -484,7 +486,7 @@ class ScoreCalculator:
 
     def thirteen_orphans(self):
         """国士无双（十三面）（门清限定）"""
-        if self.called_tiles:
+        if self._has_furu:
             return 0
         if self._tiles_set == TERMINALS_HONORS and len(self.hand_tiles) == 14:
             if self._tiles.count(self.hu_tile) > 1:
@@ -545,7 +547,7 @@ class ScoreCalculator:
 
     def nine_gates(self):
         """（纯正）九莲宝灯（门清限定）"""
-        if self.called_tiles:
+        if self._has_furu:
             return 0
         d = copy(self._hand_counter)
         first_tile = self._tiles[0]
@@ -598,7 +600,7 @@ class ScoreCalculator:
             if fixed_value == 20:
                 if self._is_sequence_hand(combination):
                     """平和型手牌"""
-                    if not self.called_tiles:
+                    if not self._has_furu:
                         """平和没有其他附加的符"""
                         values.append(value)
                         continue
