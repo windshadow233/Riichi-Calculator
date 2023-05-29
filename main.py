@@ -81,7 +81,7 @@ with st.form(key="mahjong"):
     with col3:
         is_blessing_of_heaven = st.checkbox(
             label="天和",
-            help="亲家第一巡和牌"
+            help="亲家第一巡无鸣牌的状态下和牌"
         )
         is_blessing_of_earth = st.checkbox(
             label="地和",
