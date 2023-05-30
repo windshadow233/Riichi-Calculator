@@ -221,6 +221,9 @@ class ScoreCalculator:
             seqs = filter(self.checker.is_seq, combination)
             seq_start_tiles = [_[0] for _ in seqs]
             count = Counter(seq_start_tiles)
+            if not count:
+                values.append(0)
+                continue
             if max(count.values()) == 4:
                 values.append(0)
                 continue
@@ -859,13 +862,13 @@ class ScoreCalculator:
 if __name__ == '__main__':
     calculator = ScoreCalculator()
     calculator.update(
-        tiles='1z 11111z 22222z 33333z 44444z',
-        hu_tile='1z',
-        prevailing_wind=2,
+        tiles='11m777p66s 66666p 55555p',
+        hu_tile='6s',
+        prevailing_wind=1,
         dealer_wind=1,
-        is_self_draw=1,
+        is_self_draw=0,
         lichi=0,
-        dora=3,
+        dora=0,
         ippatsu=False,
         is_under_the_sea=True,
         is_after_a_kong=False,
