@@ -5,7 +5,7 @@ from score import ScoreCalculator, ID2NAME
 import math
 
 st.set_page_config(
-    page_title="麻雀の計算",
+    page_title="麻雀の計算"
 )
 calculator = ScoreCalculator()
 st.write("<h3><center>一个<del>可能有bug的</del>立直麻将计算器</center></h3>", unsafe_allow_html=True)
@@ -16,12 +16,19 @@ st.markdown(
     font-size: 30px;
 }
 .css-15zrgzn {display: none}
+footer {visibility: hidden;}
+[data-testid="column"] {
+    width: calc(33.3333% - 1rem) !important;
+    flex: 1 1 calc(33.3333% - 1rem) !important;
+    min-width: calc(20% - 1rem) !important;
+}
+.css-1l269bu {max-width:20% !important;}
 </style>
 """,
     unsafe_allow_html=True,
 )
 with st.form(key="mahjong"):
-    col1, col2 = st.columns([4, 1])
+    col1, col2 = st.columns([5, 1])
     with col1:
         tiles = st.text_input(
             label="牌面",
@@ -65,13 +72,9 @@ with st.form(key="mahjong"):
             label="一发",
             help="立直后在无人鸣牌的状态下一巡内和牌"
         )
-        is_under_the_sea = st.checkbox(
-            label="海底捞月/河底捞鱼",
-            help="最后一张牌自摸/荣和"
-        )
     with col2:
         is_after_a_kong = st.checkbox(
-            label="岭上开花",
+            label="岭上",
             help="用摸到的岭上牌和牌"
         )
         is_robbing_the_kong = st.checkbox(
@@ -87,6 +90,10 @@ with st.form(key="mahjong"):
             label="地和",
             help="子家第一巡轮到自己前无人鸣牌的状态下自摸和牌"
         )
+    is_under_the_sea = st.checkbox(
+            label="海底捞月/河底捞鱼",
+            help="最后一张牌自摸/荣和"
+    )
     col1, col2 = st.columns(2)
     with col1:
         dora = st.number_input(
