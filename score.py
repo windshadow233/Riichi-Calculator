@@ -813,6 +813,7 @@ class ScoreCalculator:
         n = self.mixed_pure_hand()
         if n != 0:
             common_yaku_list.append(f'混一色({n}番)')
+        number += n
 
         values = self.outside_hand()
         n = np.max(values)
@@ -862,8 +863,8 @@ class ScoreCalculator:
 if __name__ == '__main__':
     calculator = ScoreCalculator()
     calculator.update(
-        tiles='11m777p66s 66666p 55555p',
-        hu_tile='6s',
+        tiles='234p5566z 66666p 222z',
+        hu_tile='5z',
         prevailing_wind=1,
         dealer_wind=1,
         is_self_draw=0,
