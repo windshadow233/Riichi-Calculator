@@ -827,7 +827,12 @@ class ScoreCalculator:
         number += n
         number += self._dora
         score = fu * 2 ** (number + 2)
-        self.max_score_index = i = score.argmax()
+        max_score = np.max(score)
+        if (score == max_score).sum() == 1:
+            self.max_score_index = score.argmax()
+        else:
+            self.max_score_index = ((score == max_score) * number).argmax()
+        i = self.max_score_index
         fu = fu[i]
         yaku = yaku_list[i]
         score = score[i]
