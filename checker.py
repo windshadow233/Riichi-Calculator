@@ -3,21 +3,22 @@ from copy import deepcopy, copy
 from collections import Counter
 
 CHARACTERS = {0, 1, 2, 3, 4, 5, 6, 7, 8}
-DOTS = {9, 10, 11, 12, 13, 14, 15, 16, 17}
-BAMBOOS = {18, 19, 20, 21, 22, 23, 24, 25, 26}
-TERMINALS = {0, 8, 9, 17, 18, 26}
-HONORS = {27, 28, 29, 30, 31, 32, 33}
-WINDS = {27, 28, 29, 30}
-DRAGONS = {31, 32, 33}
-TERMINALS_HONORS = {0, 8, 9, 17, 18, 26, 27, 28, 29, 30, 31, 32, 33}
-GREENS = {19, 20, 21, 23, 25, 32}
+DOTS = {10, 11, 12, 13, 14, 15, 16, 17, 18}
+BAMBOOS = {20, 21, 22, 23, 24, 25, 26, 27, 28}
+TERMINALS = {0, 8, 10, 18, 20, 28}
+WINDS = {30, 40, 50, 60}
+DRAGONS = {70, 80, 90}
+HONORS = {*WINDS, *DRAGONS}
+TERMINALS_HONORS = {*TERMINALS, *HONORS}
+GREENS = {21, 22, 23, 25, 27, 80}
+ALL = {*CHARACTERS, *DOTS, *BAMBOOS, *HONORS}
 
 ID2NAME = {
     **{i: f"{i + 1}萬" for i in range(9)},
-    **{i: f"{i - 8}饼" for i in range(9, 18)},
-    **{i: f"{i - 17}索" for i in range(18, 27)},
-    27: '東', 28: '南', 29: '西', 30: '北',
-    31: '白', 32: '發', 33: '中'
+    **{i: f"{i - 9}饼" for i in range(10, 19)},
+    **{i: f"{i - 19}索" for i in range(20, 29)},
+    30: '東', 40: '南', 50: '西', 60: '北',
+    70: '白', 80: '發', 90: '中'
 }
 
 
@@ -48,9 +49,9 @@ class Mahjong:
         if not (all('1' <= _ <= '9' for _ in m + p + s) and all('1' <= _ <= '7' for _ in z)):
             raise ValueError('Wrong string!')
         m = list(map(lambda x: int(x) - 1, sorted(m)))
-        p = list(map(lambda x: int(x) + 8, sorted(p)))
-        s = list(map(lambda x: int(x) + 17, sorted(s)))
-        z = list(map(lambda x: int(x) + 26, sorted(z)))
+        p = list(map(lambda x: int(x) + 9, sorted(p)))
+        s = list(map(lambda x: int(x) + 19, sorted(s)))
+        z = list(map(lambda x: 10 * (int(x) + 2), sorted(z)))
         return m + p + s + z
 
     def str2id(self, tiles: str):
@@ -72,12 +73,12 @@ class Mahjong:
         for id_ in ids:
             if 0 <= id_ < 9:
                 m += str(id_ + 1)
-            elif 9 <= id_ < 18:
-                p += str(id_ - 8)
-            elif 18 <= id_ < 27:
-                s += str(id_ - 17)
-            elif 27 <= id_ < 34:
-                z += str(id_ - 26)
+            elif 10 <= id_ < 19:
+                p += str(id_ - 9)
+            elif 20 <= id_ < 29:
+                s += str(id_ - 19)
+            elif id_ in HONORS:
+                z += str(id_ // 10 - 2)
             else:
                 raise ValueError(f'Wrong ID: {id_}!')
         res = ''
@@ -111,8 +112,6 @@ class Mahjong:
         tiles = list(set(tiles))
         tiles.sort()
         for i in range(len(tiles) - 2):
-            if tiles[i] in [7, 8, 16, 17, 25, 26, 27, 28, 29, 30, 31, 32, 33]:
-                continue
             if tiles[i] + 2 == tiles[i + 1] + 1 == tiles[i + 2]:
                 res.append((tiles[i], tiles[i + 1], tiles[i + 2]))
         return res
@@ -136,8 +135,7 @@ class Mahjong:
         return len(tiles) == 3 and tiles[0] == tiles[1] == tiles[2]
 
     def is_seq(self, tiles: List[int]):
-        return len(tiles) == 3 and tiles[0] + 2 == tiles[1] + 1 == tiles[2] \
-               and tiles[0] not in [7, 8, 16, 17, 25, 26, 27, 28, 29, 30, 31, 32, 33]
+        return len(tiles) == 3 and tiles[0] + 2 == tiles[1] + 1 == tiles[2]
 
     def _remove_items(self, tiles: List[int], items: Iterable[int]):
         tiles = copy(tiles)
@@ -206,7 +204,7 @@ class Mahjong:
                     res.update(TERMINALS_HONORS)
                 return self.id2str(res) if to_str else res
 
-        for i in range(34):
+        for i in ALL:
             if total_counter[i] < 4:
                 combs = self.search_combinations(hand_tiles + [i], len(called_tiles))
                 if combs:
