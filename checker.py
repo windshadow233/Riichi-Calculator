@@ -5,7 +5,9 @@ from collections import Counter
 CHARACTERS = {0, 1, 2, 3, 4, 5, 6, 7, 8}
 DOTS = {10, 11, 12, 13, 14, 15, 16, 17, 18}
 BAMBOOS = {20, 21, 22, 23, 24, 25, 26, 27, 28}
-TERMINALS = {0, 8, 10, 18, 20, 28}
+ONES = {0, 10, 20}
+NINES = {8, 18, 28}
+TERMINALS = {*ONES, *NINES}
 WINDS = {30, 40, 50, 60}
 DRAGONS = {70, 80, 90}
 HONORS = {*WINDS, *DRAGONS}
