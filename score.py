@@ -92,7 +92,7 @@ class ScoreCalculator:
         :param is_blessing_of_heaven: 是否为天和(非「亲家无副露自摸和」时,此参数无效)
         :param is_blessing_of_earth: 是否为地和(非「子家无副露自摸和」时,此参数无效)
         """
-        self.is_hu = False
+        self.is_hu = self.has_yaku = False
         self.tiles_str = tiles
         self.hu_tile = self.checker.str2id(hu_tile)[0][0]
         self.hand_tiles, self.called_tiles = self.checker.str2id(self.tiles_str)
@@ -109,16 +109,9 @@ class ScoreCalculator:
         if any(n > 4 for n in self._counter.values()):
             return
         self._tiles_set = set(self._tiles)
-        if not 18 >= len(self._tiles) >= 14:
-            return
-        self.combinations = list(self.checker.search_combinations(self.hand_tiles, len(self.called_tiles)))
-        self.is_hu = bool(self.combinations) and self.checker.check_called_tiles(self.called_tiles)
         self._has_furu = bool(self.called_tiles)
         self._is_concealed_hand = not self._has_furu or all(self.checker.is_concealed_kong(_) for _ in self.called_tiles)
         self._kuisagari = 1 - self._is_concealed_hand
-        if self.thirteen_orphans():
-            self.is_hu = True
-
         self._prevailing_wind = [30, 40, 50, 60][prevailing_wind - 1]
         self._dealer_wind = [30, 40, 50, 60][dealer_wind - 1]
         self._is_self_draw = is_self_draw
@@ -132,6 +125,13 @@ class ScoreCalculator:
         self._is_robbing_the_kong = is_robbing_the_kong and not is_self_draw and self._counter[self.hu_tile] == 1
         self._is_blessing_of_heaven = is_blessing_of_heaven and dealer_wind == 1 and is_self_draw and not self._has_furu
         self._is_blessing_of_earth = is_blessing_of_earth and dealer_wind != 1 and is_self_draw and not self._has_furu
+        
+        if not 18 >= len(self._tiles) >= 14:
+            return
+        self.combinations = list(self.checker.search_combinations(self.hand_tiles, len(self.called_tiles)))
+        self.is_hu = bool(self.combinations) and self.checker.check_called_tiles(self.called_tiles)
+        if self.thirteen_orphans():
+            self.is_hu = True
 
         if self.is_hu:
             self.fu, self.yaku_list, self.number, self.level, self.score = self.calculate()
