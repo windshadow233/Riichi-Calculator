@@ -370,6 +370,8 @@ class ScoreCalculator:
             else:
                 if comb_has_seq:
                     values.append(2 - self._kuisagari)
+                else:
+                    values.append(0)
         return np.array(values)
 
     def mixed_triple_chow(self):
@@ -874,8 +876,8 @@ class ScoreCalculator:
 if __name__ == '__main__':
     calculator = ScoreCalculator()
     calculator.update(
-        tiles='234p5566z 66666p 222z',
-        hu_tile='5z',
+        tiles='111m999m1z 111s 999s',
+        hu_tile='1z',
         prevailing_wind=1,
         dealer_wind=1,
         is_self_draw=0,
