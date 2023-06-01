@@ -299,9 +299,9 @@ class ScoreCalculator:
 
     def small_three_dragons(self):
         """小三元"""
-        if (self._counter[31] == 2 and self._counter[32] >= 3 and self._counter[33] >= 3) or\
-               (self._counter[31] >= 3 and self._counter[32] == 2 and self._counter[33] >= 3) or \
-               (self._counter[31] >= 3 and self._counter[32] >= 3 and self._counter[33] == 2):
+        if (self._counter[70] == 2 and self._counter[80] >= 3 and self._counter[90] >= 3) or\
+               (self._counter[70] >= 3 and self._counter[80] == 2 and self._counter[90] >= 3) or \
+               (self._counter[70] >= 3 and self._counter[80] >= 3 and self._counter[90] == 2):
             return 2
         return 0
 
@@ -545,7 +545,7 @@ class ScoreCalculator:
             return 0
         d = copy(self._hand_counter)
         first_tile = self._tiles[0]
-        if first_tile not in [0, 9, 18]:
+        if first_tile not in ONES:
             return 0
         d[first_tile] -= 3
         for offset in range(1, 8):
