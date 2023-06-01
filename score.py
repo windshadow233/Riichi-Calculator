@@ -352,18 +352,24 @@ class ScoreCalculator:
     def mixed_outside_hand(self):
         """混全带幺九(副露减一番)"""
         if self._tiles_set.isdisjoint(HONORS):
-            return np.zeros(shape=len(self.combinations))
+            return np.array([0])
+        has_seq = any(self.checker.is_seq(_) for _ in self.called_tiles)
         for called_tile in self.called_tiles:
             if not called_tile[0] in TERMINALS_HONORS and not called_tile[-1] in TERMINALS_HONORS:
-                return np.zeros(shape=len(self.combinations))
+                return np.array([0])
         values = []
         for combination in self.combinations:
+            comb_has_seq = has_seq
             for tiles in combination:
                 if not tiles[0] in TERMINALS_HONORS and not tiles[-1] in TERMINALS_HONORS:
                     values.append(0)
                     break
+                if not comb_has_seq:
+                    if self.checker.is_seq(tiles):
+                        comb_has_seq = True
             else:
-                values.append(2 - self._kuisagari)
+                if comb_has_seq:
+                    values.append(2 - self._kuisagari)
         return np.array(values)
 
     def mixed_triple_chow(self):
