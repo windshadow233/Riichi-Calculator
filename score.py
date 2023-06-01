@@ -106,8 +106,6 @@ class ScoreCalculator:
             else:
                 self._tiles.extend(meld)
         self._counter = Counter(self._tiles)
-        if any(n > 4 for n in self._counter.values()):
-            return
         self._tiles_set = set(self._tiles)
         self._has_furu = bool(self.called_tiles)
         self._is_concealed_hand = not self._has_furu or all(self.checker.is_concealed_kong(_) for _ in self.called_tiles)
@@ -125,7 +123,9 @@ class ScoreCalculator:
         self._is_robbing_the_kong = is_robbing_the_kong and not is_self_draw and self._counter[self.hu_tile] == 1
         self._is_blessing_of_heaven = is_blessing_of_heaven and dealer_wind == 1 and is_self_draw and not self._has_furu
         self._is_blessing_of_earth = is_blessing_of_earth and dealer_wind != 1 and is_self_draw and not self._has_furu
-        
+
+        if any(n > 4 for n in self._counter.values()):
+            return
         if not 18 >= len(self._tiles) >= 14:
             return
         self.combinations = list(self.checker.search_combinations(self.hand_tiles, len(self.called_tiles)))
