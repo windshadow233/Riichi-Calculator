@@ -183,8 +183,8 @@ class ScoreCalculator:
                 if tiles[0] in DRAGONS or tiles[0] == self._dealer_wind or tiles[0] == self._prevailing_wind:
                     return 0
             if self.checker.is_seq(tiles):
-                if (self.hu_tile == tiles[0] and tiles[2] not in [8, 17, 26]) \
-                        or (self.hu_tile == tiles[-1] and tiles[0] not in [0, 9, 18]):
+                if (self.hu_tile == tiles[0] and tiles[2] not in NINES) \
+                        or (self.hu_tile == tiles[-1] and tiles[0] not in ONES):
                     two_sided_wait = True
         if two_sided_wait:
             return 1
