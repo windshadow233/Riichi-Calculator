@@ -118,8 +118,8 @@ class ScoreCalculator:
         if self.thirteen_orphans():
             self.is_hu = True
 
-        self._prevailing_wind = [27, 28, 29, 30][prevailing_wind - 1]
-        self._dealer_wind = [27, 28, 29, 30][dealer_wind - 1]
+        self._prevailing_wind = [30, 40, 50, 60][prevailing_wind - 1]
+        self._dealer_wind = [30, 40, 50, 60][dealer_wind - 1]
         self._is_self_draw = is_self_draw
         if not self._is_concealed_hand:
             lichi = 0
@@ -378,9 +378,9 @@ class ScoreCalculator:
                 values.append(0)
                 continue
             seq_start_tiles.sort()
-            if seq_start_tiles[0] + 9 in seq_start_tiles and seq_start_tiles[0] + 18 in seq_start_tiles:
+            if seq_start_tiles[0] + 10 in seq_start_tiles and seq_start_tiles[0] + 20 in seq_start_tiles:
                 values.append(2 - self._kuisagari)
-            elif seq_start_tiles[1] + 9 in seq_start_tiles and seq_start_tiles[1] + 18 in seq_start_tiles:
+            elif seq_start_tiles[1] + 10 in seq_start_tiles and seq_start_tiles[1] + 20 in seq_start_tiles:
                 values.append(2 - self._kuisagari)
             else:
                 values.append(0)
@@ -398,9 +398,9 @@ class ScoreCalculator:
                 values.append(0)
                 continue
             tiles.sort()
-            if tiles[0] + 9 in tiles and tiles[0] + 18 in tiles:
+            if tiles[0] + 10 in tiles and tiles[0] + 20 in tiles:
                 values.append(2)
-            elif tiles[1] + 9 in tiles and tiles[1] + 18 in tiles:
+            elif tiles[1] + 10 in tiles and tiles[1] + 20 in tiles:
                 values.append(2)
             else:
                 values.append(0)
