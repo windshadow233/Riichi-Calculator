@@ -98,12 +98,13 @@ class ScoreCalculator:
         self.hand_tiles, self.called_tiles = self.checker.str2id(self.tiles_str)
         self.hand_tiles.append(self.hu_tile)
         self._hand_counter = Counter(self.hand_tiles)
-        self._tiles += self.hand_tiles
+        self._tiles.clear()
+        self._tiles.extend(self.hand_tiles)
         for meld in self.called_tiles:
             if self.checker.is_concealed_kong(meld):
-                self._tiles += [meld[0]] * 4
+                self._tiles.extend([meld[0]] * 4)
             else:
-                self._tiles += meld
+                self._tiles.extend(meld)
         self._counter = Counter(self._tiles)
         if any(n > 4 for n in self._counter.values()):
             return
