@@ -50,6 +50,7 @@ class ScoreCalculator:
         self.hu_tile = None
         self.has_yaku = False
         self.hand_tiles, self.called_tiles = [], []
+        self._is_thirteen_orphans = None
         self.is_hu = False
         self.combinations = []
         self.max_score_index = None
@@ -129,10 +130,8 @@ class ScoreCalculator:
         if not 18 >= len(self._tiles) >= 14:
             return
         self.combinations = list(self.checker.search_combinations(self.hand_tiles, len(self.called_tiles)))
-        self.is_hu = bool(self.combinations) and self.checker.check_called_tiles(self.called_tiles)
-        if self.thirteen_orphans():
-            self.is_hu = True
-
+        self._is_thirteen_orphans = self.thirteen_orphans()
+        self.is_hu = bool(self.combinations) and self.checker.check_called_tiles(self.called_tiles) or bool(self._is_thirteen_orphans)
         if self.is_hu:
             self.fu, self.yaku_list, self.number, self.level, self.score = self.calculate()
 
@@ -346,7 +345,7 @@ class ScoreCalculator:
         """混老头"""
         if self._tiles_set.isdisjoint(HONORS):
             return 0
-        if self._tiles_set.issubset(TERMINALS_HONORS) and not self.thirteen_orphans():
+        if self._tiles_set.issubset(TERMINALS_HONORS) and not self._is_thirteen_orphans:
             return 2
         return 0
 
@@ -569,7 +568,7 @@ class ScoreCalculator:
 
     def fussu(self):
         """计算符数"""
-        if self.thirteen_orphans():
+        if self._is_thirteen_orphans:
             """国士无双固定为25符"""
             return np.array([25])
         values = []
@@ -692,7 +691,7 @@ class ScoreCalculator:
             else:
                 yaku_list.append('四暗刻(役满)')
                 full += 1
-        n = self.thirteen_orphans()
+        n = self._is_thirteen_orphans
         if n != 0:
             if n == 26:
                 yaku_list.append('国士无双十三面(2倍役满)')
