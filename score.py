@@ -491,7 +491,7 @@ class ScoreCalculator:
         if self._has_furu:
             return 0
         if self._tiles_set == TERMINALS_HONORS and len(self.hand_tiles) == 14:
-            if self._tiles.count(self.hu_tile) > 1:
+            if self._counter[self.hu_tile] > 1:
                 """国士十三面"""
                 return 26
             return 13
