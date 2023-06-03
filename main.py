@@ -94,6 +94,25 @@ with st.form(key="mahjong"):
             label="海底捞月/河底捞鱼",
             help="最后一张牌自摸/荣和"
     )
+    with st.expander("古役", expanded=False):
+        col1, col2 = st.columns(2)
+        with col1:
+            use_ancient_yaku = st.checkbox(
+                label="使用古役"
+            )
+            tsubamegaeshi = st.checkbox(
+                label="燕返",
+                help="荣和别家的第一张立直宣言牌"
+            )
+        with col2:
+            kanfuri = st.checkbox(
+                label="杠振",
+                help="荣和别家开杠后打出的牌"
+            )
+            is_blessing_of_man = st.checkbox(
+                label="人和",
+                help="子家第一巡轮到自己前无人鸣牌的状态下荣和"
+            )
     col1, col2 = st.columns(2)
     with col1:
         dora = st.number_input(
@@ -127,7 +146,11 @@ with st.form(key="mahjong"):
                 is_after_a_kong=is_after_a_kong,
                 is_robbing_the_kong=is_robbing_the_kong,
                 is_blessing_of_heaven=is_blessing_of_heaven,
-                is_blessing_of_earth=is_blessing_of_earth
+                is_blessing_of_earth=is_blessing_of_earth,
+                use_ancient_yaku=use_ancient_yaku,
+                is_blessing_of_man=is_blessing_of_man,
+                tsubamegaeshi=tsubamegaeshi,
+                kanfuri=kanfuri
             )
             if calculator.is_hu:
                 st.write("最高得点手牌拆分")

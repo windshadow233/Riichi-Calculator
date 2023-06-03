@@ -55,6 +55,11 @@ class ScoreCalculator:
         self.combinations = []
         self.max_score_index = None
 
+        self._use_ancient_yaku = None
+        self._is_blessing_of_man = None
+        self._tsubamegaeshi = None
+        self._kanfuri = None
+
         self.fu = self.yaku_list = self.number = self.level = self.score = None
 
     def update(
@@ -71,7 +76,11 @@ class ScoreCalculator:
             is_after_a_kong=False,
             is_robbing_the_kong=False,
             is_blessing_of_heaven=False,
-            is_blessing_of_earth=False
+            is_blessing_of_earth=False,
+            use_ancient_yaku=False,
+            is_blessing_of_man=False,
+            tsubamegaeshi=False,
+            kanfuri=False
     ):
         """
         万子:1-9m
@@ -92,8 +101,12 @@ class ScoreCalculator:
         :param is_robbing_the_kong: 是否为抢杠(当is_self_draw为True或手牌有此牌时,此参数无效)
         :param is_blessing_of_heaven: 是否为天和(非「亲家无副露自摸和」时,此参数无效)
         :param is_blessing_of_earth: 是否为地和(非「子家无副露自摸和」时,此参数无效)
+        :param use_ancient_yaku: 是否使用古役（仅考虑雀魂麻将游戏里的古役）
+        :param is_blessing_of_man: 是否为人和(非「子家无副露荣和」时,此参数无效)
+        :param tsubamegaeshi: 是否触发燕返（use_ancient_yaku为True时有效）
+        :param kanfuri: 是否杠振（use_ancient_yaku为True时有效）
         """
-        self.is_hu = self.has_yaku = False
+        self.__init__()
         self.tiles_str = tiles
         self.hu_tile = self.checker.str2id(hu_tile)[0][0]
         self.hand_tiles, self.called_tiles = self.checker.str2id(self.tiles_str)
@@ -107,6 +120,10 @@ class ScoreCalculator:
             else:
                 self._tiles.extend(meld)
         self._counter = Counter(self._tiles)
+        if any(n > 4 for n in self._counter.values()):
+            return
+        if not 18 >= len(self._tiles) >= 14:
+            return
         self._tiles_set = set(self._tiles)
         self._has_furu = bool(self.called_tiles)
         self._is_concealed_hand = not self._has_furu or all(self.checker.is_concealed_kong(_) for _ in self.called_tiles)
@@ -125,13 +142,13 @@ class ScoreCalculator:
         self._is_blessing_of_heaven = is_blessing_of_heaven and dealer_wind == 1 and is_self_draw and not self._has_furu
         self._is_blessing_of_earth = is_blessing_of_earth and dealer_wind != 1 and is_self_draw and not self._has_furu
 
-        if any(n > 4 for n in self._counter.values()):
-            return
-        if not 18 >= len(self._tiles) >= 14:
-            return
         self.combinations = list(self.checker.search_combinations(self.hand_tiles, len(self.called_tiles)))
         self._is_thirteen_orphans = self.thirteen_orphans()
         self.is_hu = bool(self.combinations) and self.checker.check_called_tiles(self.called_tiles) or bool(self._is_thirteen_orphans)
+        self._use_ancient_yaku = use_ancient_yaku
+        self._is_blessing_of_man = is_blessing_of_man and not is_self_draw and dealer_wind != 1 and not self._has_furu
+        self._tsubamegaeshi = tsubamegaeshi and not self._is_self_draw
+        self._kanfuri = kanfuri and not self._is_self_draw
         if self.is_hu:
             self.fu, self.yaku_list, self.number, self.level, self.score = self.calculate()
 
@@ -246,6 +263,13 @@ class ScoreCalculator:
             value = self._is_sequence_hand(combination)
             values.append(value)
         return np.array(values)
+
+    def shiiaruraotai(self):
+        """古役 十二落抬"""
+        if len(self.called_tiles) == 4:
+            if all(not self.checker.is_concealed_kong(_) for _ in self.called_tiles):
+                return 1
+        return 0
 
     """二番"""
 
@@ -392,6 +416,36 @@ class ScoreCalculator:
                 values.append(0)
         return np.array(values)
 
+    def all_types(self):
+        """古役 五门齐"""
+        if not self._tiles_set.isdisjoint(CHARACTERS) \
+            and not self._tiles_set.isdisjoint(DOTS) \
+            and not self._tiles_set.isdisjoint(BAMBOOS) \
+            and not self._tiles_set.isdisjoint(WINDS) \
+            and not self._tiles_set.isdisjoint(DRAGONS):
+            return 2
+        return 0
+
+    def three_consecutive_triplets(self):
+        """古役 三连刻"""
+        values = []
+        called_triplets = list(filter(lambda x: self.checker.is_triplet(x) or self.checker.is_kong(x), self.called_tiles))
+        called_triplet_ids = list(map(lambda x: x[0], called_triplets))
+        for combination in self.combinations:
+            triplets = list(filter(self.checker.is_triplet, combination))
+            tiles = [_[0] for _ in triplets] + called_triplet_ids
+            if len(tiles) < 3:
+                values.append(0)
+                continue
+            tiles.sort()
+            if tiles[0] + 1 in tiles and tiles[0] + 2 in tiles:
+                values.append(2)
+            elif tiles[1] + 1 in tiles and tiles[1] + 2 in tiles:
+                values.append(2)
+            else:
+                values.append(0)
+        return np.array(values)
+
     """三番"""
 
     def pure_double_chows(self):
@@ -428,6 +482,22 @@ class ScoreCalculator:
                 values.append(3 - self._kuisagari)
         return np.array(values)
 
+    def three_identical_sequences(self):
+        """古役 一色三同顺 （副露减一番）"""
+        called_seq_start_tiles = [_[0] for _ in filter(self.checker.is_seq, self.called_tiles)]
+        values = []
+        for combination in self.combinations:
+            seqs = filter(self.checker.is_seq, combination)
+            seq_start_tiles = [_[0] for _ in seqs]
+            count = Counter(seq_start_tiles + called_seq_start_tiles)
+            if not count:
+                values.append(0)
+            elif any(_ >= 3 for _ in count.values()):
+                values.append(3 - self._kuisagari)
+            else:
+                values.append(0)
+        return np.array(values)
+
     """六番"""
 
     def pure_hand(self):
@@ -437,6 +507,20 @@ class ScoreCalculator:
             if self._tiles_set.isdisjoint(HONORS):
                 return 6 - self._kuisagari
             return 3 - self._kuisagari
+        return 0
+
+    """满贯"""
+
+    def ippinmoyue(self):
+        """古役 一筒摸月"""
+        if self._is_under_the_sea and self._is_self_draw and self.hu_tile == 10:
+            return 5
+        return 0
+
+    def cyupinraoyui(self):
+        """古役 九筒捞鱼"""
+        if self._is_under_the_sea and not self._is_self_draw and self.hu_tile == 18:
+            return 5
         return 0
 
     """役满"""
@@ -542,6 +626,38 @@ class ScoreCalculator:
             return 13
         return 0
 
+    def big_seven_stars(self):
+        """古役 大七星（门清限定）"""
+        if self._has_furu:
+            return 0
+        if self.hand_tiles == [30, 30, 40, 40, 50, 50, 60, 60, 70, 70, 80, 80, 90, 90]:
+            return 26
+        return 0
+
+    def big_wheels(self):
+        """古役 大车轮"""
+        if self._has_furu:
+            return 0
+        if self.hand_tiles == [11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16, 16, 17, 17]:
+            return 13
+        return 0
+
+    def big_bamboos(self):
+        """古役 大竹林"""
+        if self._has_furu:
+            return 0
+        if self.hand_tiles == [21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27]:
+            return 13
+        return 0
+
+    def big_numbers(self):
+        """古役 大数邻"""
+        if self._has_furu:
+            return 0
+        if self.hand_tiles == [1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7]:
+            return 13
+        return 0
+
     def fussu(self):
         """计算符数"""
         if self._is_thirteen_orphans:
@@ -631,6 +747,9 @@ class ScoreCalculator:
         if self._is_blessing_of_earth:
             yaku_list.append('地和(役满)')
             full += 1
+        if self._use_ancient_yaku and self._is_blessing_of_man:
+            yaku_list.append('人和(役满)')
+            full += 1
         n = self.four_kongs()
         if n != 0:
             yaku_list.append('四杠子(役满)')
@@ -683,6 +802,22 @@ class ScoreCalculator:
             else:
                 yaku_list.append('九莲宝灯(役满)')
                 full += 1
+        if self._use_ancient_yaku:
+            if self.big_seven_stars():
+                n = 26
+                yaku_list.append('大七星(2倍役满)')
+            elif self.big_wheels():
+                n = 13
+                yaku_list.append('大车轮(役满)')
+            elif self.big_bamboos():
+                n = 13
+                yaku_list.append('大竹林(役满)')
+            elif self.big_numbers():
+                n = 13
+                yaku_list.append('大数邻(役满)')
+            else:
+                n = 0
+            full += n // 13
         if full:
             self.has_yaku = True
             fu = np.max(fu)
@@ -693,16 +828,32 @@ class ScoreCalculator:
         common_yaku_list = []
         if self._is_under_the_sea:
             if self._is_self_draw:
-                common_yaku_list.append('海底捞月(1番)')
+                if self._use_ancient_yaku and self.ippinmoyue():
+                    common_yaku_list.append('一筒摸月(5番)')
+                    n = 5
+                else:
+                    common_yaku_list.append('海底捞月(1番)')
+                    n = 1
             else:
+                if self._use_ancient_yaku and self.cyupinraoyui():
+                    common_yaku_list.append('九筒捞鱼(5番)')
+                    n = 5
                 common_yaku_list.append('河底捞鱼(1番)')
-            number += 1
+                n = 1
+            number += n
         if self._is_after_a_kong:
             common_yaku_list.append('岭上开花(1番)')
             number += 1
         if self._is_robbing_the_kong:
             common_yaku_list.append('抢杠(1番)')
             number += 1
+        if self._use_ancient_yaku:
+            if self._tsubamegaeshi:
+                common_yaku_list.append('燕返(1番)')
+                number += 1
+            if self._kanfuri:
+                common_yaku_list.append('杠振(1番)')
+                number += 1
         yaku_list: List[List[str]] = [[] for _ in self.combinations]
         number += self._lichi
         if self._lichi == 1:
@@ -798,6 +949,27 @@ class ScoreCalculator:
             yaku_list[i].append(f'纯全带幺九({n}番)')
         number += values
 
+        if self._use_ancient_yaku:
+            values = self.three_identical_sequences()
+            for i in np.where(values != 0)[0]:
+                yaku_list[i].append(f'一色三同顺({n}番)')
+            number += values
+
+            n = self.all_types()
+            if n:
+                common_yaku_list.append('五门齐(2番)')
+            number += n
+
+            values = self.three_consecutive_triplets()
+            for i in np.where(values != 0)[0]:
+                yaku_list[i].append('三连刻(2番)')
+            number += values
+
+            n = self.shiiaruraotai()
+            if n:
+                common_yaku_list.append('十二落抬(1番)')
+            number += n
+
         n = self.pure_hand()
         if n != 0:
             if n <= 3:
@@ -848,8 +1020,8 @@ class ScoreCalculator:
 if __name__ == '__main__':
     calculator = ScoreCalculator()
     calculator.update(
-        tiles='111m999m1z 111s 999s',
-        hu_tile='1z',
+        tiles='111222333678m1s',
+        hu_tile='1s',
         prevailing_wind=1,
         dealer_wind=1,
         is_self_draw=0,
@@ -860,6 +1032,7 @@ if __name__ == '__main__':
         is_after_a_kong=False,
         is_robbing_the_kong=False,
         is_blessing_of_heaven=False,
-        is_blessing_of_earth=False
+        is_blessing_of_earth=False,
+        use_ancient_yaku=True
     )
     print(calculator)
