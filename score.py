@@ -212,29 +212,8 @@ class ScoreCalculator:
             return 1
         return 0
 
-    def pure_double_chow(self):
-        """一杯口（门清限定）"""
-        values = []
-        if not self._is_concealed_hand:
-            return np.array([0])
-        for combination in self.combinations:
-            seqs = filter(self.checker.is_seq, combination)
-            seq_start_tiles = [_[0] for _ in seqs]
-            count = Counter(seq_start_tiles)
-            if not count:
-                values.append(0)
-                continue
-            if max(count.values()) == 4:
-                values.append(0)
-                continue
-            if sum(map(lambda x: x >= 2, count.values())) == 1:
-                values.append(1)
-            else:
-                values.append(0)
-        return np.array(values)
-
     def value_tiles(self):
-        """役牌番数"""
+        """役牌"""
         n = 0
         for called_tile in self.called_tiles:
             if called_tile[0] in DRAGONS:
@@ -365,8 +344,7 @@ class ScoreCalculator:
                     values.append(0)
                     break
                 if not comb_has_seq:
-                    if self.checker.is_seq(tiles):
-                        comb_has_seq = True
+                    comb_has_seq = self.checker.is_seq(tiles)
             else:
                 if comb_has_seq:
                     values.append(2 - self._kuisagari)
@@ -416,17 +394,8 @@ class ScoreCalculator:
 
     """三番"""
 
-    def mixed_pure_hand(self):
-        """混一色(副露减一番)"""
-        if self._tiles_set.isdisjoint(HONORS):
-            return 0
-        rm_honor = self._tiles_set.difference(HONORS)
-        if rm_honor.issubset(CHARACTERS) or rm_honor.issubset(DOTS) or rm_honor.issubset(BAMBOOS):
-            return 3 - self._kuisagari
-        return 0
-
-    def twice_pure_double_chows(self):
-        """二杯口（门清限定）"""
+    def pure_double_chows(self):
+        """二杯口（一杯口1番）（门清限定）"""
         if self._has_furu:
             return np.array([0])
         values = []
@@ -434,17 +403,21 @@ class ScoreCalculator:
             seqs = filter(self.checker.is_seq, combination)
             seq_start_tiles = [_[0] for _ in seqs]
             count = Counter(seq_start_tiles)
-            if list(count.values()) in [[2, 2], [4]]:
+            if not count:
+                values.append(0)
+            elif sum(map(lambda x: x >= 2, count.values())) == 1:
+                values.append(1)
+            elif list(count.values()) in [[2, 2], [4]]:
                 values.append(3)
             else:
                 values.append(0)
         return np.array(values)
 
     def outside_hand(self):
-        """纯全带幺九(副露减一番)"""
+        """纯全带幺九（副露减一番）"""
         for called_tile in self.called_tiles:
             if not called_tile[0] in TERMINALS and not called_tile[-1] in TERMINALS:
-                return np.zeros(shape=len(self.combinations))
+                return np.array([0])
         values = []
         for combination in self.combinations:
             for tiles in combination:
@@ -458,9 +431,12 @@ class ScoreCalculator:
     """六番"""
 
     def pure_hand(self):
-        """清一色(副露减一番)"""
-        if self._tiles_set.issubset(CHARACTERS) or self._tiles_set.issubset(DOTS) or self._tiles_set.issubset(BAMBOOS):
-            return 6 - self._kuisagari
+        """染手，（混一色3番）(副露减一番)"""
+        rm_honor = self._tiles_set.difference(HONORS)
+        if rm_honor.issubset(CHARACTERS) or rm_honor.issubset(DOTS) or rm_honor.issubset(BAMBOOS):
+            if self._tiles_set.isdisjoint(HONORS):
+                return 6 - self._kuisagari
+            return 3 - self._kuisagari
         return 0
 
     """役满"""
@@ -740,11 +716,6 @@ class ScoreCalculator:
             common_yaku_list.append('门前清自摸和(1番)')
             number += 1
 
-        values = self.pure_double_chow()
-        for i in np.where(values != 0)[0]:
-            yaku_list[i].append('一杯口(1番)')
-        number += values
-
         values = self.sequence_hand()
         for i in np.where(values != 0)[0]:
             yaku_list[i].append('平和(1番)')
@@ -755,9 +726,12 @@ class ScoreCalculator:
             yaku_list[i].append('七对子(2番)')
         number += values
 
-        values = self.twice_pure_double_chows()
+        values = self.pure_double_chows()
         for i in np.where(values != 0)[0]:
-            yaku_list[i].append('二杯口(3番)')
+            if values[i] == 3:
+                yaku_list[i].append('二杯口(3番)')
+            elif values[i] == 1:
+                yaku_list[i].append('一杯口(1番)')
         number += values
 
         n = self.all_simple()
@@ -818,11 +792,6 @@ class ScoreCalculator:
             yaku_list[i].append('三色同刻(2番)')
         number += values
 
-        n = self.mixed_pure_hand()
-        if n != 0:
-            common_yaku_list.append(f'混一色({n}番)')
-        number += n
-
         values = self.outside_hand()
         n = np.max(values)
         for i in np.where(values != 0)[0]:
@@ -831,7 +800,10 @@ class ScoreCalculator:
 
         n = self.pure_hand()
         if n != 0:
-            common_yaku_list.append(f'清一色({n}番)')
+            if n <= 3:
+                common_yaku_list.append(f'混一色({n}番)')
+            else:
+                common_yaku_list.append(f'清一色({n}番)')
         number += n
         number += self._dora
         score = fu * 2 ** (number + 2)
