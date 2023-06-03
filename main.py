@@ -108,7 +108,7 @@ with st.form(key="mahjong"):
             label="本场数",
             min_value=0,
             step=1,
-            help="本场数在亲家连庄或荒牌流局之后加1，其他情况下清零"
+            help="本场数在亲家连庄或流局之后加1，其他情况下清零"
         )
 
 
