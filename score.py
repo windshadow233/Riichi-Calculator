@@ -441,7 +441,7 @@ class ScoreCalculator:
         return np.array(values)
 
     def outside_hand(self):
-        """全纯带幺九(副露减一番)"""
+        """纯全带幺九(副露减一番)"""
         for called_tile in self.called_tiles:
             if not called_tile[0] in TERMINALS and not called_tile[-1] in TERMINALS:
                 return np.zeros(shape=len(self.combinations))
