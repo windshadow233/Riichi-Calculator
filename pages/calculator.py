@@ -168,7 +168,7 @@ with st.form(key="mahjong"):
                     comb = '\u2001'.join(''.join(ID2ICON[tile] for tile in meld) for meld in comb)
                     st.code(comb)
                 else:
-                    st.info(calculator.hand_string())
+                    st.code(calculator.hand_string())
                 if calculator.called_tiles:
                     st.write("副露")
                     st.code(calculator.called_string())
