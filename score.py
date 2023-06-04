@@ -658,6 +658,12 @@ class ScoreCalculator:
             return 13
         return 0
 
+    def three_years_on_stone(self):
+        """古役 石上三年"""
+        if self._lichi == 2 and self._is_under_the_sea:
+            return 13
+        return 0
+
     def fussu(self):
         """计算符数"""
         if self._is_thirteen_orphans:
@@ -737,7 +743,7 @@ class ScoreCalculator:
         return np.array(values)
 
     def calculate(self):
-        """计算番数"""
+        """计算基本点数"""
         yaku_list: List[str] = []
         full = 0
         fu = self.fussu()
@@ -747,9 +753,13 @@ class ScoreCalculator:
         if self._is_blessing_of_earth:
             yaku_list.append('地和(役满)')
             full += 1
-        if self._use_ancient_yaku and self._is_blessing_of_man:
-            yaku_list.append('人和(役满)')
-            full += 1
+        if self._use_ancient_yaku:
+            if self._is_blessing_of_man:
+                yaku_list.append('人和(役满)')
+                full += 1
+            if self.three_years_on_stone():
+                yaku_list.append('石上三年(役满)')
+                full += 1
         n = self.four_kongs()
         if n != 0:
             yaku_list.append('四杠子(役满)')
