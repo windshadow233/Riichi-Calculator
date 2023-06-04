@@ -554,7 +554,7 @@ class ScoreCalculator:
                     is_tanki = True
             if s + consealed_kong_count == 4:
                 self.max_score_index = i
-                if is_tanki:
+                if is_tanki or self._is_blessing_of_heaven:
                     return 26
                 return 13
         return 0
@@ -564,7 +564,7 @@ class ScoreCalculator:
         if self._has_furu:
             return 0
         if self._tiles_set == TERMINALS_HONORS and len(self.hand_tiles) == 14:
-            if self._counter[self.hu_tile] > 1:
+            if self._counter[self.hu_tile] > 1 or self._is_blessing_of_heaven:
                 """国士十三面"""
                 return 26
             return 13
@@ -634,7 +634,7 @@ class ScoreCalculator:
         d[first_tile + 8] -= 3
         extra = list(filter(lambda x: d[x] == 1, d))
         if all(map(lambda x: x >= 0, d.values())) and extra:
-            if extra[0] == self.hu_tile:
+            if extra[0] == self.hu_tile or self._is_blessing_of_heaven:
                 return 26
             return 13
         return 0
