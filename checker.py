@@ -48,19 +48,19 @@ class Mahjong:
                 raise ValueError('Wrong string!')
         if stack != '':
             raise ValueError('Wrong string!')
-        if not (all('1' <= _ <= '9' for _ in m + p + s) and all('1' <= _ <= '7' for _ in z)):
+        if not (all('0' <= _ <= '9' for _ in m + p + s) and all('1' <= _ <= '7' for _ in z)):
             raise ValueError('Wrong string!')
-        m = list(map(lambda x: int(x) - 1, sorted(m)))
-        p = list(map(lambda x: int(x) + 9, sorted(p)))
-        s = list(map(lambda x: int(x) + 19, sorted(s)))
+        m = list(map(lambda x: int(x) - 1, sorted(m.replace('0', '5'))))
+        p = list(map(lambda x: int(x) + 9, sorted(p.replace('0', '5'))))
+        s = list(map(lambda x: int(x) + 19, sorted(s.replace('0', '5'))))
         z = list(map(lambda x: 10 * (int(x) + 2), sorted(z)))
         return m + p + s + z
 
     def str2id(self, tiles: str):
         """
-        万子:1-9m
-        筒子:1-9p
-        索子:1-9s
+        万子:0-9m
+        筒子:0-9p
+        索子:0-9s
         东南西北:1-4z
         白发中:5-7z
         """
