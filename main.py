@@ -33,16 +33,20 @@ with st.form(key="mahjong"):
         tiles = st.text_input(
             label="牌面",
             help="请按照以下格式书写牌面字符串: "
-                 "其中，万、饼、索分别用数字1-9加上字母'm'、'p'、's'进行表示。"
+                 "其中，万、饼、索分别用数字1-9加上字母'm'、'p'、's'进行表示。赤宝牌用数字0表示。"
                  "字牌(東南西北白發中)分别用1z-7z表示。"
                  "副露以空格分隔，写在手牌后，如果是暗杠，则写五次对应的数字。"
-                 "例如, 若和牌者的手牌有三萬、五萬、两个一饼，和了牌是四萬，副露为一二三饼的顺子、白板的暗杠以及六索的明杠，则应在此栏填入下面的字符串: "
-                 "'35m11p 123p 55555z 6666s'，并且在后面的'和了牌'一栏填写'4m'"
+                 "例如, 若和牌者的手牌有三萬、赤五萬、两个一饼，和了牌是四萬，副露为一二三饼的顺子、白板的暗杠以及六索的明杠，则应在此栏填入下面的字符串: "
+                 "'30m11p 123p 55555z 6666s'，并且在后面的'和了牌'一栏填写'4m'"
         ).strip()
     with col2:
         hu_tile = st.text_input(label="和了牌", help="表示方法与'牌面'相同，只填一张牌（听牌计算时不需要填写）")
     col1, col2 = st.columns(2)
     with col1:
+        dora = st.text_input(
+            label="宝牌指示牌",
+            help="表示方法与'牌面'相同"
+        )
         prevailing_wind_str = st.radio(
             label="场风",
             options=['東', '南', '西', '北'],
@@ -50,6 +54,10 @@ with st.form(key="mahjong"):
         )
         prevailing_wind = ['東', '南', '西', '北'].index(prevailing_wind_str) + 1
     with col2:
+        ura_dora = st.text_input(
+            label="里宝牌指示牌",
+            help="表示方法与'牌面'相同"
+        )
         dealer_wind_str = st.radio(
             label="自风",
             options=['東', '南', '西', '北'],
@@ -116,12 +124,12 @@ with st.form(key="mahjong"):
             )
     col1, col2 = st.columns(2)
     with col1:
-        dora = st.number_input(
-            label="宝牌数量",
+        north_dora = st.number_input(
+            label="拔北宝牌数量",
             min_value=0,
             value=0,
             step=1,
-            help="包含宝牌、赤宝牌、立直的里宝牌以及三人场的拔北宝牌"
+            help="三麻限定"
         )
     with col2:
         game_number = st.number_input(
@@ -142,6 +150,8 @@ with st.form(key="mahjong"):
                 is_self_draw=is_self_draw,
                 lichi=lichi,
                 dora=dora,
+                ura_dora=ura_dora,
+                north_dora=north_dora,
                 ippatsu=ippatsu,
                 is_under_the_sea=is_under_the_sea,
                 is_after_a_kong=is_after_a_kong,
@@ -164,6 +174,14 @@ with st.form(key="mahjong"):
                 if calculator.called_tiles:
                     st.write("副露")
                     st.info(calculator.called_string())
+                col1, col2 = st.columns(2)
+                with col1:
+                    st.write("宝牌指示牌")
+                    st.info(calculator.dora_string())
+                if lichi:
+                    with col2:
+                        st.write("里宝牌指示牌")
+                        st.info(calculator.ura_dora_string())
                 st.write("役种、宝牌")
                 st.info(''.join([f'〖{yaku}〗' for yaku in calculator.yaku_list]))
                 if not calculator.has_yaku:

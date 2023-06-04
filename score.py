@@ -1,5 +1,4 @@
 from checker import *
-import re
 import numpy as np
 import math
 
@@ -39,7 +38,10 @@ class ScoreCalculator:
         self._dealer_wind = None
         self._is_self_draw = None
         self._lichi = None
-        self._dora = None
+        self._red_dora = 0
+        self._dora = []
+        self._ura_dora = []
+        self._north_dora = 0
         self._ippatsu = None
         self._is_under_the_sea = None
         self._is_after_a_kong = None
@@ -71,6 +73,8 @@ class ScoreCalculator:
             is_self_draw,
             lichi,
             dora,
+            ura_dora,
+            north_dora=0,
             ippatsu=False,
             is_under_the_sea=False,
             is_after_a_kong=False,
@@ -88,13 +92,15 @@ class ScoreCalculator:
         索子:1-9s
         东南西北:1-4z
         白发中:5-7z
-        :param tiles: 手牌字符串，若有副露则以空格隔离，例：19m19p19s1234567z，1233m 5555m 789m 123m
+        :param tiles: 手牌字符串，若有副露则以空格隔离，例：19m19p19s1234567z，1233m 5555m 789m 123m，赤宝牌以数字0和对应的字母表示
         :param hu_tile: 和了牌
         :param prevailing_wind: 场风 (东:1, 南:2, 西:3, 北:4)
         :param dealer_wind: 自风 (同上)
         :param is_self_draw: 是否自摸
         :param lichi: 立直时值为1, 两立直时值为2, 否则为0 (非门清状态下此参数无效)
-        :param dora: 宝牌数量(包含宝牌、立直翻的里宝牌、赤宝牌)
+        :param dora: 宝牌指示牌(包含宝牌、杠宝牌)
+        :param ura_dora: 里宝牌指示牌(包含里宝牌、杠里宝牌)
+        :param north_dora: 拔北宝牌数(三麻限定，拔北宝牌数)
         :param ippatsu: 是否为一发(当lichi为0时,此参数无效)
         :param is_under_the_sea: 是否为海底捞月、河底捞鱼
         :param is_after_a_kong: 是否为岭上开花(当is_self_draw为False或副露无杠时,此参数无效)
@@ -107,6 +113,11 @@ class ScoreCalculator:
         :param kanfuri: 是否杠振（use_ancient_yaku为True时有效）
         """
         self.__init__()
+        self._red_dora = (tiles + hu_tile).count('0')
+        tiles = tiles.replace('0', '5')
+        hu_tile = hu_tile.replace('0', '5')
+        dora = dora.replace('0', '5')
+        ura_dora = ura_dora.replace('0', '5')
         self.tiles_str = tiles
         self.hu_tile = self.checker.str2id(hu_tile)[0][0]
         self.hand_tiles, self.called_tiles = self.checker.str2id(self.tiles_str)
@@ -122,6 +133,8 @@ class ScoreCalculator:
         self._counter = Counter(self._tiles)
         if any(n > 4 for n in self._counter.values()):
             return
+        if north_dora + self._counter[60] > 4:
+            return
         if not 18 >= len(self._tiles) >= 14:
             return
         self._tiles_set = set(self._tiles)
@@ -131,10 +144,12 @@ class ScoreCalculator:
         self._prevailing_wind = [30, 40, 50, 60][prevailing_wind - 1]
         self._dealer_wind = [30, 40, 50, 60][dealer_wind - 1]
         self._is_self_draw = is_self_draw
+        self._dora = self.checker.str2id(dora)[0]
+        self._ura_dora = self.checker.str2id(ura_dora)[0]
+        self._north_dora = north_dora
         if not self._is_concealed_hand:
             lichi = 0
         self._lichi = lichi
-        self._dora = dora
         self._ippatsu = ippatsu and bool(lichi)
         self._is_under_the_sea = is_under_the_sea
         self._is_after_a_kong = is_after_a_kong and is_self_draw and any(self.checker.is_kong(_) for _ in self.called_tiles)
@@ -159,7 +174,7 @@ class ScoreCalculator:
             self.level = SCORE_LEVELS.get(self.level)
 
     def hand_string(self):
-        return ' '.join(ID2NAME[tile] for tile in self.hand_tiles)
+        return ' '.join(ID2NAME[_] for _ in self.hand_tiles)
 
     def called_string(self):
         s = ''
@@ -169,6 +184,12 @@ class ScoreCalculator:
             else:
                 s += '「' + ' '.join(ID2NAME[tile] for tile in called_tile) + '」'
         return s
+
+    def dora_string(self):
+        return ' '.join('「' + ID2NAME[_] + '」' for _ in self._dora)
+
+    def ura_dora_string(self):
+        return ' '.join('「' + ID2NAME[_] + '」' for _ in self._ura_dora)
 
     def __str__(self):
         if self.tiles_str == '':
@@ -180,6 +201,9 @@ class ScoreCalculator:
             s += self.called_string()
         if self.is_hu:
             s += f'\n和了牌: {ID2NAME[self.hu_tile]}'
+            s += f'\n宝牌: {self.dora_string()}'
+            if self._lichi:
+                s += f'\n里宝牌: {self.ura_dora_string()}'
             s += f'\n符数: {self.fu}'
             s += '\n役种、宝牌: ' + '、'.join(self.yaku_list)
             s += f'\n番数: {self.number}'
@@ -742,6 +766,18 @@ class ScoreCalculator:
             values.append(math.ceil(value / 10) * 10)
         return np.array(values)
 
+    def dora_count(self):
+        n = self._north_dora + self._red_dora
+        f = lambda x: x - 8 if x in NINES else ((x // 10 - 2) % 4 + 3) * 10 if x in WINDS else ((x // 10 - 6) % 3 + 7) * 10 if x in DRAGONS else x + 1
+        dora = map(f, self._dora)
+        counter = copy(self._counter)
+        counter.update([60] * self._north_dora)
+        n += sum(counter[_] for _ in dora)
+        if self._lichi:
+            ura_dora = map(f, self._ura_dora)
+            n += sum(counter[_] for _ in ura_dora)
+        return n
+
     def calculate(self):
         """计算基本点数"""
         yaku_list: List[str] = []
@@ -988,7 +1024,8 @@ class ScoreCalculator:
             else:
                 common_yaku_list.append(f'清一色({n}番)')
         number += n
-        number += self._dora
+        dora_count = self.dora_count()
+        number += dora_count
         score = fu * 2 ** (number + 2)
         max_score = np.max(score)
         if (score == max_score).sum() == 1:
@@ -1000,7 +1037,7 @@ class ScoreCalculator:
         yaku = yaku_list[i]
         score = score[i]
         number = number[i]
-        if number - self._dora > 0:
+        if number - dora_count > 0:
             self.has_yaku = True
         if number < 5:
             if score > 2000:
@@ -1023,27 +1060,29 @@ class ScoreCalculator:
         else:
             score = 8000
             level = TOTAL_YAKU_MAN
-        if self._dora:
-            yaku.append(f'DORA {self._dora}')
+        if dora_count:
+            yaku.append(f'DORA {dora_count}')
         return fu, common_yaku_list + yaku, int(number), level, int(score)
 
 
 if __name__ == '__main__':
     calculator = ScoreCalculator()
     calculator.update(
-        tiles='111222333678m1s',
-        hu_tile='1s',
+        tiles='5566z 77777z 11111z 11111s',
+        hu_tile='5z',
         prevailing_wind=1,
         dealer_wind=1,
         is_self_draw=0,
-        lichi=0,
-        dora=0,
+        lichi=2,
+        dora='363z99s',
+        ura_dora='99s336z',
+        north_dora=4,
         ippatsu=False,
         is_under_the_sea=True,
         is_after_a_kong=False,
         is_robbing_the_kong=False,
         is_blessing_of_heaven=False,
         is_blessing_of_earth=False,
-        use_ancient_yaku=True
+        use_ancient_yaku=False
     )
     print(calculator)
