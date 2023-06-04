@@ -756,8 +756,8 @@ class ScoreCalculator:
                             value += 2
                             wait_form = 0
                         else:
-                            if not (self.hu_tile == tiles[0] and tiles[2] not in [8, 17, 26]) \
-                                    and not (self.hu_tile == tiles[-1] and tiles[0] not in [0, 9, 18]):
+                            if not (self.hu_tile == tiles[0] and tiles[2] not in NINES) \
+                                    and not (self.hu_tile == tiles[-1] and tiles[0] not in ONES):
                                 value += 2
                                 wait_form = 1
                     if self.checker.is_pair(tiles) and self.hu_tile == tiles[0]:
