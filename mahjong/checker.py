@@ -15,12 +15,17 @@ TERMINALS_HONORS = {*TERMINALS, *HONORS}
 GREENS = {21, 22, 23, 25, 27, 80}
 ALL = {*CHARACTERS, *DOTS, *BAMBOOS, *HONORS}
 
-ID2NAME = {
-    **{i: f"{i + 1}萬" for i in range(9)},
-    **{i: f"{i - 9}饼" for i in range(10, 19)},
-    **{i: f"{i - 19}索" for i in range(20, 29)},
-    30: '東', 40: '南', 50: '西', 60: '北',
-    70: '白', 80: '發', 90: '中'
+CHARACTERS_ICONS = "🀇🀈🀉🀊🀋🀌🀍🀎🀏"
+DOTS_ICONS = "🀙🀚🀛🀜🀝🀞🀟🀠🀡"
+BAMBOOS_ICONS = "🀐🀑🀒🀓🀔🀕🀖🀗🀘"
+HONORS_ICONS = "🀀🀁🀂🀃🀆🀅🀄"
+
+
+ID2ICON = {
+    **{i: CHARACTERS_ICONS[i] for i in range(9)},
+    **{i: DOTS_ICONS[i - 10] for i in range(10, 19)},
+    **{i: BAMBOOS_ICONS[i - 20] for i in range(20, 29)},
+    **{i: HONORS_ICONS[i // 10 - 3] for i in HONORS}
 }
 
 
