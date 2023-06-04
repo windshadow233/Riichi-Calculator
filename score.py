@@ -114,16 +114,11 @@ class ScoreCalculator:
         """
         self.__init__()
         self._red_dora = (tiles + hu_tile).count('0')
-        # tiles = tiles.replace('0', '5')
-        # hu_tile = hu_tile.replace('0', '5')
-        # dora = dora.replace('0', '5')
-        # ura_dora = ura_dora.replace('0', '5')
         self.tiles_str = tiles
         self.hu_tile = self.checker.str2id(hu_tile)[0][0]
         self.hand_tiles, self.called_tiles = self.checker.str2id(self.tiles_str)
         self.hand_tiles.append(self.hu_tile)
         self._hand_counter = Counter(self.hand_tiles)
-        self._tiles.clear()
         self._tiles.extend(self.hand_tiles)
         for meld in self.called_tiles:
             if self.checker.is_concealed_kong(meld):
