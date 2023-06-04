@@ -98,7 +98,8 @@ with st.form(key="mahjong"):
         col1, col2 = st.columns(2)
         with col1:
             use_ancient_yaku = st.checkbox(
-                label="使用古役"
+                label="使用古役",
+                help="仅使用「雀魂」游戏中收录的古役"
             )
             tsubamegaeshi = st.checkbox(
                 label="燕返",
