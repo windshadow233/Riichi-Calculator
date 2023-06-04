@@ -181,7 +181,11 @@ with st.form(key="mahjong"):
                 if lichi:
                     with col2:
                         st.write("里宝牌指示牌")
-                        st.info(calculator.ura_dora_string())
+                        if ura_dora:
+                            st.info(calculator.ura_dora_string())
+                        else:
+                            st.warning("请输入里宝牌指示牌")
+                            st.stop()
                 st.write("役种、宝牌")
                 st.info(''.join([f'〖{yaku}〗' for yaku in calculator.yaku_list]))
                 if not calculator.has_yaku:
