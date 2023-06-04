@@ -196,9 +196,9 @@ class ScoreCalculator:
             s += self.called_string()
         if self.is_hu:
             s += f'\n和了牌: {ID2NAME[self.hu_tile]}'
-            s += f'\n宝牌: {self.dora_string()}'
+            s += f'\n宝牌指示牌: {self.dora_string()}'
             if self._lichi:
-                s += f'\n里宝牌: {self.ura_dora_string()}'
+                s += f'\n里宝牌指示牌: {self.ura_dora_string()}'
             s += f'\n符数: {self.fu}'
             s += '\n役种、宝牌: ' + '、'.join(self.yaku_list)
             s += f'\n番数: {self.number}'
