@@ -459,10 +459,10 @@ class ScoreCalculator:
             count = Counter(seq_start_tiles)
             if not count:
                 values.append(0)
-            elif sum(map(lambda x: x >= 2, count.values())) == 1:
-                values.append(1)
             elif list(count.values()) in [[2, 2], [4]]:
                 values.append(3)
+            elif sum(map(lambda x: x >= 2, count.values())) == 1:
+                values.append(1)
             else:
                 values.append(0)
         return np.array(values)
@@ -961,6 +961,7 @@ class ScoreCalculator:
 
         if self._use_ancient_yaku:
             values = self.three_identical_sequences()
+            n = np.max(values)
             for i in np.where(values != 0)[0]:
                 yaku_list[i].append(f'一色三同顺({n}番)')
             number += values
