@@ -173,31 +173,31 @@ class ScoreCalculator:
         else:
             self.level = SCORE_LEVELS.get(self.level)
 
-    def hand_string(self):
-        return ''.join(ID2ICON[_] for _ in self.hand_tiles)
+    def hand_unicode(self):
+        return ''.join(ID2UNICODE[_] for _ in self.hand_tiles)
 
-    def called_string(self):
-        return '\u2001'.join(f'🀫{ID2ICON[_[0]]}{ID2ICON[_[0]]}🀫' if len(_) == 5 else ''.join(ID2ICON[tile] for tile in _) for _ in self.called_tiles)
+    def called_unicode(self):
+        return '\u2001'.join(f'🀫{ID2UNICODE[_[0]]}{ID2UNICODE[_[0]]}🀫' if len(_) == 5 else ''.join(ID2UNICODE[tile] for tile in _) for _ in self.called_tiles)
 
-    def dora_string(self):
-        return ''.join(ID2ICON[_] for _ in self.dora)
+    def dora_unicode(self):
+        return ''.join(ID2UNICODE[_] for _ in self.dora)
 
-    def ura_dora_string(self):
-        return ''.join(ID2ICON[_] for _ in self.ura_dora)
+    def ura_dora_unicode(self):
+        return ''.join(ID2UNICODE[_] for _ in self.ura_dora)
 
     def __str__(self):
         if self.tiles_str == '':
             return ''
         s = "手牌: "
-        s += self.hand_string()
+        s += self.hand_unicode()
         if self._has_furu:
             s += '\n副露: '
-            s += self.called_string()
+            s += self.called_unicode()
         if self.is_hu:
-            s += f'\n和了牌: {ID2ICON[self.hu_tile]}'
-            s += f'\n宝牌指示牌: {self.dora_string()}'
+            s += f'\n和了牌: {ID2UNICODE[self.hu_tile]}'
+            s += f'\n宝牌指示牌: {self.dora_unicode()}'
             if self._lichi:
-                s += f'\n里宝牌指示牌: {self.ura_dora_string()}'
+                s += f'\n里宝牌指示牌: {self.ura_dora_unicode()}'
             s += f'\n符数: {self.fu}'
             s += '\n役种、宝牌: ' + '、'.join(self.yaku_list)
             s += f'\n番数: {self.number}'

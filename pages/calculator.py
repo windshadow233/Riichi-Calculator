@@ -1,6 +1,6 @@
 import re
 import streamlit as st
-from mahjong.score import ScoreCalculator, ID2ICON
+from mahjong.score import ScoreCalculator
 from mahjong.svg import str2svg, id2svg
 import math
 

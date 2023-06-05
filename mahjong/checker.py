@@ -19,17 +19,17 @@ TERMINALS_HONORS = {*TERMINALS, *HONORS}
 GREENS = {21, 22, 23, 25, 27, 80}
 ALL = {*MANS, *PINS, *SOUS, *HONORS}
 
-CHARACTERS_ICONS = "🀇🀈🀉🀊🀋🀌🀍🀎🀏"
-DOTS_ICONS = "🀙🀚🀛🀜🀝🀞🀟🀠🀡"
-BAMBOOS_ICONS = "🀐🀑🀒🀓🀔🀕🀖🀗🀘"
-HONORS_ICONS = "🀀🀁🀂🀃🀆🀅🀄"
+CHARACTERS_UNICODE = "🀇🀈🀉🀊🀋🀌🀍🀎🀏"
+DOTS_UNICODE = "🀙🀚🀛🀜🀝🀞🀟🀠🀡"
+BAMBOOS_UNICODE = "🀐🀑🀒🀓🀔🀕🀖🀗🀘"
+HONORS_UNICODE = "🀀🀁🀂🀃🀆🀅🀄"
 
 
-ID2ICON = {
-    **{i: CHARACTERS_ICONS[i] for i in range(9)},
-    **{i: DOTS_ICONS[i - 10] for i in range(10, 19)},
-    **{i: BAMBOOS_ICONS[i - 20] for i in range(20, 29)},
-    **{i: HONORS_ICONS[i // 10 - 3] for i in HONORS}
+ID2UNICODE = {
+    **{i: CHARACTERS_UNICODE[i] for i in range(9)},
+    **{i: DOTS_UNICODE[i - 10] for i in range(10, 19)},
+    **{i: BAMBOOS_UNICODE[i - 20] for i in range(20, 29)},
+    **{i: HONORS_UNICODE[i // 10 - 3] for i in HONORS}
 }
 
 
@@ -80,35 +80,14 @@ class Mahjong:
             called_tiles[i] = self._str2id(called)[0]
         return hand_tiles, called_tiles, red_count
 
-    def _id2str(self, ids: Iterable[int]):
-        m = p = s = z = ''
-        for id_ in ids:
-            if 0 <= id_ < 9:
-                m += str(id_ + 1)
-            elif 10 <= id_ < 19:
-                p += str(id_ - 9)
-            elif 20 <= id_ < 29:
-                s += str(id_ - 19)
-            elif id_ in HONORS:
-                z += str(id_ // 10 - 2)
-            else:
-                raise ValueError(f'Wrong ID: {id_}!')
-        res = ''
-        if m:
-            res += ''.join(sorted(m)) + 'm'
-        if p:
-            res += ''.join(sorted(p)) + 'p'
-        if s:
-            res += ''.join(sorted(s)) + 's'
-        if z:
-            res += ''.join(sorted(z)) + 'z'
-        return res
+    def _id2unicode(self, ids: Iterable[int]):
+        return ''.join(map(ID2UNICODE.get, ids))
 
-    def id2str(self, hand_tiles: Iterable[int], called_tiles: List[List[int]] = None):
+    def id2unicode(self, hand_tiles: Iterable[int], called_tiles: List[List[int]] = None):
         if called_tiles is None:
             called_tiles = []
-        hand_tiles = self._id2str(hand_tiles)
-        called_tiles = ' '.join(self._id2str(_) for _ in called_tiles)
+        hand_tiles = self._id2unicode(hand_tiles)
+        called_tiles = ' '.join(self._id2unicode(_) for _ in called_tiles)
         return ' '.join([hand_tiles, called_tiles]).strip()
 
     def _search_triplet(self, tiles: List[int]):
@@ -188,7 +167,7 @@ class Mahjong:
         res = set([tuple(sorted(_, key=lambda x: (-len(x), x[0]))) for _ in res])
         return res
 
-    def calculate_ready_hand(self, tiles: str, to_str=True):
+    def calculate_ready_hand(self, tiles: str, to_unicode=True):
         """
         听牌计算（必须包含雀头或单骑听雀头的情形）
         万子:1-9m
@@ -197,7 +176,7 @@ class Mahjong:
         东南西北:1-4z
         白发中:5-7z
         :param tiles: 手牌字符串，若有副露则以空格隔离，例：19m19p19s1234567z，1233m 5555m 789m 123m
-        :param to_str: 是否将结果转化为易读的字符串
+        :param to_unicode: 是否将结果转化为易读的字符串
         """
         hand_tiles, called_tiles, _ = self.str2id(tiles)
         if not self.check_called_tiles(called_tiles):
@@ -214,11 +193,11 @@ class Mahjong:
                     res.add(diff.pop())
                 else:
                     res.update(TERMINALS_HONORS)
-                return self.id2str(res) if to_str else res
+                return self.id2unicode(res) if to_unicode else res
 
         for i in ALL:
             if total_counter[i] < 4:
                 combs = self.search_combinations(hand_tiles + [i], len(called_tiles))
                 if combs:
                     res.add(i)
-        return self.id2str(res) if to_str else res
+        return self.id2unicode(res) if to_unicode else res
