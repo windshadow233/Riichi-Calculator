@@ -107,9 +107,8 @@ def str2svg(tiles: str, fold_concealed_kongs=False):
     seqs = str2svgid(tiles)
     id_list = []
     for seq in seqs:
-        if len(seq) == 5:
-            if fold_concealed_kongs:
-                id_list += [-2, seq[1], seq[2], -2, -3]
+        if len(seq) == 5 and fold_concealed_kongs:
+            id_list += [-2, seq[1], seq[2], -2, -3]
         else:
             id_list += seq + [-3]
     return id2svg(id_list[:-1])
