@@ -1057,8 +1057,8 @@ class ScoreCalculator:
 if __name__ == '__main__':
     calculator = ScoreCalculator()
     calculator.update(
-        tiles='55m66z 77777z 11111z 11111s',
-        hu_tile='0m',
+        tiles='55z66z 77777z 11111z 11111s',
+        hu_tile='5z',
         prevailing_wind=1,
         dealer_wind=1,
         is_self_draw=0,
