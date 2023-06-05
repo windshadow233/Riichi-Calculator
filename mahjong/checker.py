@@ -1,6 +1,7 @@
 from typing import List, Iterable
 from copy import deepcopy, copy
 from collections import Counter
+import numpy as np
 
 MANS = {0, 1, 2, 3, 4, 5, 6, 7, 8}
 PINS = {10, 11, 12, 13, 14, 15, 16, 17, 18}
@@ -58,11 +59,12 @@ class Mahjong:
             raise ValueError('Wrong string!')
         if not (all('0' <= _ <= '9' for _ in m + p + s) and all('1' <= _ <= '7' for _ in z)):
             raise ValueError('Wrong string!')
+        red_count = np.array([m.count('0'), p.count('0'), s.count('0')])
         m = list(map(lambda x: int(x) - 1, sorted(m.replace('0', '5'))))
         p = list(map(lambda x: int(x) + 9, sorted(p.replace('0', '5'))))
         s = list(map(lambda x: int(x) + 19, sorted(s.replace('0', '5'))))
         z = list(map(lambda x: 10 * (int(x) + 2), sorted(z)))
-        return m + p + s + z
+        return m + p + s + z, red_count
 
     def str2id(self, tiles: str):
         """
@@ -73,10 +75,10 @@ class Mahjong:
         白发中:5-7z
         """
         hand_tiles, *called_tiles = tiles.split(' ')
-        hand_tiles = self._str2id(hand_tiles)
+        hand_tiles, red_count = self._str2id(hand_tiles)
         for i, called in enumerate(called_tiles):
-            called_tiles[i] = self._str2id(called)
-        return hand_tiles, called_tiles
+            called_tiles[i] = self._str2id(called)[0]
+        return hand_tiles, called_tiles, red_count
 
     def _id2str(self, ids: Iterable[int]):
         m = p = s = z = ''
@@ -197,7 +199,7 @@ class Mahjong:
         :param tiles: 手牌字符串，若有副露则以空格隔离，例：19m19p19s1234567z，1233m 5555m 789m 123m
         :param to_str: 是否将结果转化为易读的字符串
         """
-        hand_tiles, called_tiles = self.str2id(tiles)
+        hand_tiles, called_tiles, _ = self.str2id(tiles)
         if not self.check_called_tiles(called_tiles):
             return
         res = set()

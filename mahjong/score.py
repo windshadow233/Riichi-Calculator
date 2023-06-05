@@ -39,6 +39,7 @@ class ScoreCalculator:
         self._is_self_draw = None
         self._lichi = None
         self._red_dora = 0
+        self.hand_red_count = []
         self.dora = []
         self.ura_dora = []
         self._north_dora = 0
@@ -115,8 +116,12 @@ class ScoreCalculator:
         self.__init__()
         self._red_dora = (tiles + hu_tile).count('0')
         self.tiles_str = tiles
-        self.hu_tile = self.checker.str2id(hu_tile)[0][0]
-        self.hand_tiles, self.called_tiles = self.checker.str2id(self.tiles_str)
+        self.hu_tile, _, hand_red_count = self.checker.str2id(hu_tile)
+        self.hu_tile = self.hu_tile[0]
+        self.hand_tiles, self.called_tiles, self.hand_red_count = self.checker.str2id(self.tiles_str)
+        self.hand_red_count += hand_red_count
+        if np.any(self.hand_red_count > 1):
+            return
         self.hand_tiles.append(self.hu_tile)
         self._hand_counter = Counter(self.hand_tiles)
         self._tiles.extend(self.hand_tiles)
