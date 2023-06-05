@@ -15,7 +15,7 @@ footer {visibility: hidden;}
 }
 .css-1l269bu {max-width:20% !important;}
 [data-testid="stText"] {font-size: 45px}
-.tiles {height:100%; overflow-x:scroll; overflow-y:hidden; white-space: nowrap;}
+.tiles {height:100%; overflow-x:scroll; overflow-y:hidden; white-space: nowrap;margin-top: -10px}
 .tile {width: 40px;height:50px;}
 .blank-tile {width: 10px;height:50px;}
 </style>
