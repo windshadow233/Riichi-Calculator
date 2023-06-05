@@ -32,7 +32,6 @@ def load():
     numbers = ['1', '2', '3', '6', '5', '13', '26']
     with open("static/yaku_list.json", encoding='utf-8') as f:
         data = json.loads(f.read())
-    print("loading")
     return tabs, numbers, data
 
 
