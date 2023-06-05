@@ -22,8 +22,8 @@ footer {visibility: hidden;}
 }
 .css-1l269bu {max-width:20% !important;}
 pre span {font-size: 30px;}
-.tiles {height:100%; overflow-x:scroll; overflow-y:hidden; white-space: nowrap;}
-.tile {width: 40px;height:50px;}
+.tiles {height:100%; overflow-x:scroll; overflow-y:hidden; white-space: nowrap;margin-top: -15px}
+.tile {width: 40px;height: 50px;}
 .blank-tile {width: 10px;height:50px;}
 </style>
 """,
