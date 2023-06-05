@@ -1,3 +1,5 @@
+import time
+
 import streamlit as st
 import json
 from mahjong.checker import Mahjong
@@ -22,14 +24,25 @@ footer {visibility: hidden;}
 """,
     unsafe_allow_html=True,
 )
-maj = Mahjong()
-TABS = ["一番", "二番", "三番", "六番", "满贯", "役满", "双倍役满"]
-NUMBERS = ['1', '2', '3', '6', '5', '13', '26']
-with open("static/yaku_list.json", encoding='utf-8') as f:
-    DATA = json.loads(f.read())
+
+
+@st.cache_resource
+def load():
+    tabs = ["一番", "二番", "三番", "六番", "满贯", "役满", "双倍役满"]
+    numbers = ['1', '2', '3', '6', '5', '13', '26']
+    with open("static/yaku_list.json", encoding='utf-8') as f:
+        data = json.loads(f.read())
+    print("loading")
+    return tabs, numbers, data
+
+
+TABS, NUMBERS, DATA = load()
+
 tabs = st.tabs(
     [s.center(5, '\u2001') for s in TABS]
 )
+
+
 for i in range(7):
     d = DATA[NUMBERS[i]]
     with tabs[i]:
