@@ -58,5 +58,5 @@ for i in range(7):
             elif kuisagari:
                 st.warning("副露减一番")
             if example:
-                st.write(str2svg(example), unsafe_allow_html=True)
+                st.write(str2svg(example, fold_concealed_kongs=True), unsafe_allow_html=True)
             st.divider()
