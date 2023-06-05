@@ -2,6 +2,7 @@ import re
 
 import streamlit as st
 from mahjong.score import ScoreCalculator, ID2ICON
+from mahjong.svg import str2svg, id2svg
 import math
 
 calculator = ScoreCalculator()
@@ -21,6 +22,9 @@ footer {visibility: hidden;}
 }
 .css-1l269bu {max-width:20% !important;}
 pre span {font-size: 30px;}
+.tiles {height:100%; overflow-x:scroll; overflow-y:hidden; white-space: nowrap;}
+.tile {width: 40px;height:50px;}
+.blank-tile {width: 10px;height:50px;}
 </style>
 """,
     unsafe_allow_html=True,
@@ -165,25 +169,36 @@ with st.form(key="mahjong"):
                 st.write("最高得点手牌拆分")
                 if calculator.combinations:
                     comb = calculator.combinations[calculator.max_score_index]
-                    comb = '\u2001'.join(''.join(ID2ICON[tile] for tile in meld) for meld in comb)
-                    st.code(comb)
+                    id_list = []
+                    for seq in comb:
+                        if len(seq) == 5 and len(set(seq)) == 1:
+                            id_list += [-2, seq[0], seq[0], -2, -3]
+                        else:
+                            id_list += [*seq, -3]
+                    st.write(id2svg(id_list[:-1]), unsafe_allow_html=True)
                 else:
-                    st.code(calculator.hand_string())
+                    st.write(id2svg(calculator.hand_tiles), unsafe_allow_html=True)
                 if calculator.called_tiles:
                     st.write("副露")
-                    st.code(calculator.called_string())
+                    id_list = []
+                    for seq in calculator.called_tiles:
+                        if len(seq) == 5 and len(set(seq)) == 1:
+                            id_list += [-2, seq[0], seq[0], -2, -3]
+                        else:
+                            id_list += [*seq, -3]
+                    st.write(id2svg(id_list[:-1]), unsafe_allow_html=True)
                 col1, col2 = st.columns(2)
                 with col1:
                     st.write("宝牌指示牌")
                     if dora:
-                        st.code(calculator.dora_string())
+                        st.write(id2svg(calculator.dora), unsafe_allow_html=True)
                     else:
                         st.warning("未填入宝牌指示牌")
                 if lichi:
                     with col2:
                         st.write("里宝牌指示牌")
                         if ura_dora:
-                            st.code(calculator.ura_dora_string())
+                            st.write(id2svg(calculator.ura_dora), unsafe_allow_html=True)
                         else:
                             st.warning("未填入里宝牌指示牌")
                 st.write("役种、宝牌")
@@ -195,8 +210,9 @@ with st.form(key="mahjong"):
                 with col1:
                     st.metric(
                         label="和了牌",
-                        value=ID2ICON[calculator.hu_tile]
+                        value=""
                     )
+                    st.write(id2svg([calculator.hu_tile]), unsafe_allow_html=True)
                 with col2:
                     st.metric(
                         label="符数",

@@ -2,9 +2,12 @@ from typing import List, Iterable
 from copy import deepcopy, copy
 from collections import Counter
 
-CHARACTERS = {0, 1, 2, 3, 4, 5, 6, 7, 8}
-DOTS = {10, 11, 12, 13, 14, 15, 16, 17, 18}
-BAMBOOS = {20, 21, 22, 23, 24, 25, 26, 27, 28}
+MANS = {0, 1, 2, 3, 4, 5, 6, 7, 8}
+PINS = {10, 11, 12, 13, 14, 15, 16, 17, 18}
+SOUS = {20, 21, 22, 23, 24, 25, 26, 27, 28}
+AKA_MAN = -1
+AKA_PIN = 9
+AKA_SOU = 19
 ONES = {0, 10, 20}
 NINES = {8, 18, 28}
 TERMINALS = {*ONES, *NINES}
@@ -13,7 +16,7 @@ DRAGONS = {70, 80, 90}
 HONORS = {*WINDS, *DRAGONS}
 TERMINALS_HONORS = {*TERMINALS, *HONORS}
 GREENS = {21, 22, 23, 25, 27, 80}
-ALL = {*CHARACTERS, *DOTS, *BAMBOOS, *HONORS}
+ALL = {*MANS, *PINS, *SOUS, *HONORS}
 
 CHARACTERS_ICONS = "🀇🀈🀉🀊🀋🀌🀍🀎🀏"
 DOTS_ICONS = "🀙🀚🀛🀜🀝🀞🀟🀠🀡"

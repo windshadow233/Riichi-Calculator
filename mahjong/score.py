@@ -39,8 +39,8 @@ class ScoreCalculator:
         self._is_self_draw = None
         self._lichi = None
         self._red_dora = 0
-        self._dora = []
-        self._ura_dora = []
+        self.dora = []
+        self.ura_dora = []
         self._north_dora = 0
         self._ippatsu = None
         self._is_under_the_sea = None
@@ -139,8 +139,8 @@ class ScoreCalculator:
         self._prevailing_wind = [30, 40, 50, 60][prevailing_wind - 1]
         self._dealer_wind = [30, 40, 50, 60][dealer_wind - 1]
         self._is_self_draw = is_self_draw
-        self._dora = self.checker.str2id(dora)[0]
-        self._ura_dora = self.checker.str2id(ura_dora)[0]
+        self.dora = self.checker.str2id(dora)[0]
+        self.ura_dora = self.checker.str2id(ura_dora)[0]
         self._north_dora = north_dora
         if not self._is_concealed_hand:
             lichi = 0
@@ -175,10 +175,10 @@ class ScoreCalculator:
         return '\u2001'.join(f'🀫{ID2ICON[_[0]]}{ID2ICON[_[0]]}🀫' if len(_) == 5 else ''.join(ID2ICON[tile] for tile in _) for _ in self.called_tiles)
 
     def dora_string(self):
-        return ''.join(ID2ICON[_] for _ in self._dora)
+        return ''.join(ID2ICON[_] for _ in self.dora)
 
     def ura_dora_string(self):
-        return ''.join(ID2ICON[_] for _ in self._ura_dora)
+        return ''.join(ID2ICON[_] for _ in self.ura_dora)
 
     def __str__(self):
         if self.tiles_str == '':
@@ -431,9 +431,9 @@ class ScoreCalculator:
 
     def all_types(self):
         """古役 五门齐"""
-        if not self._tiles_set.isdisjoint(CHARACTERS) \
-            and not self._tiles_set.isdisjoint(DOTS) \
-            and not self._tiles_set.isdisjoint(BAMBOOS) \
+        if not self._tiles_set.isdisjoint(MANS) \
+            and not self._tiles_set.isdisjoint(PINS) \
+            and not self._tiles_set.isdisjoint(SOUS) \
             and not self._tiles_set.isdisjoint(WINDS) \
             and not self._tiles_set.isdisjoint(DRAGONS):
             return 2
@@ -516,7 +516,7 @@ class ScoreCalculator:
     def pure_hand(self):
         """染手，（混一色3番）(副露减一番)"""
         rm_honor = self._tiles_set.difference(HONORS)
-        if rm_honor.issubset(CHARACTERS) or rm_honor.issubset(DOTS) or rm_honor.issubset(BAMBOOS):
+        if rm_honor.issubset(MANS) or rm_honor.issubset(PINS) or rm_honor.issubset(SOUS):
             if self._tiles_set.isdisjoint(HONORS):
                 return 6 - self._kuisagari
             return 3 - self._kuisagari
@@ -758,12 +758,12 @@ class ScoreCalculator:
     def dora_count(self):
         n = self._north_dora + self._red_dora
         f = lambda x: x - 8 if x in NINES else ((x // 10 - 2) % 4 + 3) * 10 if x in WINDS else ((x // 10 - 6) % 3 + 7) * 10 if x in DRAGONS else x + 1
-        dora = map(f, self._dora)
+        dora = map(f, self.dora)
         counter = copy(self._counter)
         counter.update([60] * self._north_dora)
         n += sum(counter[_] for _ in dora)
         if self._lichi:
-            ura_dora = map(f, self._ura_dora)
+            ura_dora = map(f, self.ura_dora)
             n += sum(counter[_] for _ in ura_dora)
         return n
 
@@ -1057,8 +1057,8 @@ class ScoreCalculator:
 if __name__ == '__main__':
     calculator = ScoreCalculator()
     calculator.update(
-        tiles='5566z 77777z 11111z 11111s',
-        hu_tile='5z',
+        tiles='55m66z 77777z 11111z 11111s',
+        hu_tile='0m',
         prevailing_wind=1,
         dealer_wind=1,
         is_self_draw=0,
