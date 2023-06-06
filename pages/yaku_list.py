@@ -1,9 +1,6 @@
-import time
-
 import streamlit as st
 import json
-from mahjong.checker import Mahjong
-from mahjong.svg import str2svg
+from mahjong.svg import id2svg
 
 st.write("<h3><center>役种一览</center></h3>", unsafe_allow_html=True)
 st.markdown(
@@ -58,5 +55,5 @@ for i in range(7):
             elif kuisagari:
                 st.warning("副露减一番")
             if example:
-                st.write(str2svg(example, fold_concealed_kongs=True), unsafe_allow_html=True)
+                st.write(id2svg(example), unsafe_allow_html=True)
             st.divider()
