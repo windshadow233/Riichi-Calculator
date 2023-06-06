@@ -120,8 +120,8 @@ class ScoreCalculator:
         self.hu_tile = self.hu_tile[0]
         self.hand_tiles, self.called_tiles, self.hand_red_count = self.checker.str2id(self.tiles_str)
         self.hand_red_count += hand_red_count
-        if np.any(self.hand_red_count > 1):
-            return
+        # if np.any(self.hand_red_count > 1):
+        #     return
         self.hand_tiles.append(self.hu_tile)
         self._hand_counter = Counter(self.hand_tiles)
         self._tiles.extend(self.hand_tiles)
