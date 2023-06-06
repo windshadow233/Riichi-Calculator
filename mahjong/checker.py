@@ -77,7 +77,8 @@ class Mahjong:
         hand_tiles, *called_tiles = tiles.split(' ')
         hand_tiles, red_count = self._str2id(hand_tiles)
         for i, called in enumerate(called_tiles):
-            called_tiles[i] = self._str2id(called)[0]
+            called_tiles[i], c = self._str2id(called)
+            red_count += c
         return hand_tiles, called_tiles, red_count
 
     def _id2unicode(self, ids: Iterable[int]):
