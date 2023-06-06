@@ -93,7 +93,7 @@ def _str2svgid(tiles: str):
 
 
 def str2svgid(tiles: str):
-    items = tiles.split(' ')
+    items = tiles.split()
     for item in items:
         yield _str2svgid(item)
 
