@@ -172,7 +172,8 @@ with st.form(key="mahjong"):
                     id_list = []
                     for seq in comb:
                         id_list += [*seq, -3]
-                    id_list = ' '.join(map(str, id_list)).replace('4', '-1', red_count[0]).replace('14', '9', red_count[1]).replace('24', '19', red_count[2])
+                    id_list = ' '.join(map(str, id_list)).replace(' 4 ', ' -1 ', red_count[0]).replace('14', '9', red_count[1]).replace('24', '19', red_count[2])
+
                     id_list = list(map(int, id_list.split(' ')))
                     st.write(id2svg(id_list[:-1]), unsafe_allow_html=True)
                 else:
