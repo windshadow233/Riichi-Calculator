@@ -38,8 +38,7 @@ class ScoreCalculator:
         self._dealer_wind = None
         self._is_self_draw = None
         self._lichi = None
-        self._red_dora = 0
-        self.hand_red_count = []
+        self.red_dora = []
         self.dora = []
         self.ura_dora = []
         self._north_dora = 0
@@ -114,12 +113,11 @@ class ScoreCalculator:
         :param kanfuri: 是否杠振（use_ancient_yaku为True时有效）
         """
         self.__init__()
-        self._red_dora = (tiles + hu_tile).count('0')
         self.tiles_str = tiles
-        self.hu_tile, _, hand_red_count = self.checker.str2id(hu_tile)
+        self.hu_tile, _, self.red_dora = self.checker.str2id(hu_tile)
         self.hu_tile = self.hu_tile[0]
-        self.hand_tiles, self.called_tiles, self.hand_red_count = self.checker.str2id(self.tiles_str)
-        self.hand_red_count += hand_red_count
+        self.hand_tiles, self.called_tiles, _red_dora = self.checker.str2id(self.tiles_str)
+        self.red_dora += _red_dora
         # if np.any(self.hand_red_count > 1):
         #     return
         self.hand_tiles.append(self.hu_tile)
@@ -761,7 +759,7 @@ class ScoreCalculator:
         return np.array(values)
 
     def dora_count(self):
-        n = self._north_dora + self._red_dora
+        n = self._north_dora + np.sum(self.red_dora)
         f = lambda x: x - 8 if x in NINES else ((x // 10 - 2) % 4 + 3) * 10 if x in WINDS else ((x // 10 - 6) % 3 + 7) * 10 if x in DRAGONS else x + 1
         dora = map(f, self.dora)
         counter = copy(self._counter)
