@@ -64,7 +64,7 @@ class Mahjong:
         p = list(map(lambda x: int(x) + 9, sorted(p.replace('0', '5'))))
         s = list(map(lambda x: int(x) + 19, sorted(s.replace('0', '5'))))
         z = list(map(lambda x: 10 * (int(x) + 2), sorted(z)))
-        return m + p + s + z, red_count
+        return m + p + s + z, red_count.clip(0, 4)
 
     def str2id(self, tiles: str):
         """
