@@ -1,3 +1,4 @@
+import re
 from typing import List, Iterable
 from copy import deepcopy, copy
 from collections import Counter
@@ -59,12 +60,11 @@ class Mahjong:
             raise ValueError('Wrong string!')
         if not (all('0' <= _ <= '9' for _ in m + p + s) and all('1' <= _ <= '7' for _ in z)):
             raise ValueError('Wrong string!')
-        red_count = np.array([m.count('0'), p.count('0'), s.count('0')])
-        m = list(map(lambda x: int(x) - 1, sorted(m.replace('0', '5'))))
-        p = list(map(lambda x: int(x) + 9, sorted(p.replace('0', '5'))))
-        s = list(map(lambda x: int(x) + 19, sorted(s.replace('0', '5'))))
-        z = list(map(lambda x: 10 * (int(x) + 2), sorted(z)))
-        return m + p + s + z, red_count.clip(0, 4)
+        m = list(map(lambda x: int(x) - 1, m))
+        p = list(map(lambda x: int(x) + 9, p))
+        s = list(map(lambda x: int(x) + 19, s))
+        z = list(map(lambda x: 10 * (int(x) + 2), z))
+        return m + p + s + z
 
     def str2id(self, tiles: str):
         """
@@ -74,13 +74,11 @@ class Mahjong:
         东南西北:1-4z
         白发中:5-7z
         """
-        hand_tiles, *called_tiles = tiles.split(' ')
-        hand_tiles, hand_red_count = self._str2id(hand_tiles)
-        called_red_count = np.zeros(3)
+        hand_tiles, *called_tiles = re.split(' +', tiles)
+        hand_tiles = self._str2id(hand_tiles)
         for i, called in enumerate(called_tiles):
-            called_tiles[i], c = self._str2id(called)
-            called_red_count += c
-        return hand_tiles, called_tiles, hand_red_count, called_red_count
+            called_tiles[i] = self._str2id(called)
+        return hand_tiles, called_tiles
 
     def _id2unicode(self, ids: Iterable[int]):
         return ''.join(map(ID2UNICODE.get, ids))

@@ -115,15 +115,21 @@ class ScoreCalculator:
         """
         self.__init__()
         self.tiles_str = tiles
-        self.hu_tile, _, self.hand_red_dora, _ = self.checker.str2id(hu_tile)
+        self.hu_tile, _ = self.checker.str2id(hu_tile)
         self.hu_tile = self.hu_tile[0]
-        self.hand_tiles, self.called_tiles, hand_red_dora, call_red_dora = self.checker.str2id(self.tiles_str)
-        self.hand_red_dora += hand_red_dora
-        self._red_dora = int(np.sum(self.hand_red_dora + call_red_dora))
+        self.hand_tiles, self.called_tiles = self.checker.str2id(self.tiles_str)
         self.hand_tiles.append(self.hu_tile)
+
+        self.hand_red_dora = [self.hand_tiles.count(_) for _ in [AKA_MAN, AKA_PIN, AKA_SOU]]
+        self.hand_tiles = list(sorted(map(lambda x: x + 5 if x % 10 == 9 else x, self.hand_tiles)))
+        self._red_dora = sum(self.hand_red_dora)
+
         self._hand_counter = Counter(self.hand_tiles)
         self._tiles.extend(self.hand_tiles)
-        for meld in self.called_tiles:
+        for i, meld in enumerate(self.called_tiles):
+            red_dora = np.array([meld.count(_) for _ in [AKA_MAN, AKA_PIN, AKA_SOU]]).clip(0, 4)
+            self._red_dora += sum(red_dora)
+            self.called_tiles[i] = meld = list(sorted(map(lambda x: x + 5 if x % 10 == 9 else x, meld)))
             if self.checker.is_concealed_kong(meld):
                 self._tiles.extend([meld[0]] * 4)
             else:

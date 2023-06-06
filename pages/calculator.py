@@ -180,7 +180,7 @@ with st.form(key="mahjong"):
                     st.write(id2svg(calculator.hand_tiles), unsafe_allow_html=True)
                 if calculator.called_tiles:
                     st.write("副露")
-                    st.write(str2svg(tiles[tiles.find(' ')+1:], True), unsafe_allow_html=True)
+                    st.write(str2svg(tiles[re.search(' +', tiles).end():], True), unsafe_allow_html=True)
                 col1, col2 = st.columns(2)
                 with col1:
                     st.write("宝牌指示牌")
