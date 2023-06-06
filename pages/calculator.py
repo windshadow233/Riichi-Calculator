@@ -168,7 +168,7 @@ with st.form(key="mahjong"):
                 st.write("最高得点手牌拆分")
                 if calculator.combinations:
                     comb = calculator.combinations[calculator.max_score_index]
-                    red_count = calculator.hand_red_count
+                    red_count = calculator.red_dora
                     id_list = []
                     for seq in comb:
                         id_list += [*seq, -3]
