@@ -75,11 +75,12 @@ class Mahjong:
         白发中:5-7z
         """
         hand_tiles, *called_tiles = tiles.split(' ')
-        hand_tiles, red_count = self._str2id(hand_tiles)
+        hand_tiles, hand_red_count = self._str2id(hand_tiles)
+        called_red_count = np.zeros(3)
         for i, called in enumerate(called_tiles):
             called_tiles[i], c = self._str2id(called)
-            red_count += c
-        return hand_tiles, called_tiles, red_count
+            called_red_count += c
+        return hand_tiles, called_tiles, hand_red_count, called_red_count
 
     def _id2unicode(self, ids: Iterable[int]):
         return ''.join(map(ID2UNICODE.get, ids))
@@ -179,7 +180,7 @@ class Mahjong:
         :param tiles: 手牌字符串，若有副露则以空格隔离，例：19m19p19s1234567z，1233m 5555m 789m 123m
         :param to_unicode: 是否将结果转化为易读的字符串
         """
-        hand_tiles, called_tiles, _ = self.str2id(tiles)
+        hand_tiles, called_tiles, _, _ = self.str2id(tiles)
         if not self.check_called_tiles(called_tiles):
             return
         res = set()
