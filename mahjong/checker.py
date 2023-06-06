@@ -178,7 +178,7 @@ class Mahjong:
         :param tiles: 手牌字符串，若有副露则以空格隔离，例：19m19p19s1234567z，1233m 5555m 789m 123m
         :param to_unicode: 是否将结果转化为易读的字符串
         """
-        hand_tiles, called_tiles, _, _ = self.str2id(tiles)
+        hand_tiles, called_tiles = self.str2id(tiles)
         if not self.check_called_tiles(called_tiles):
             return
         res = set()
