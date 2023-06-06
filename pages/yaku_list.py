@@ -1,6 +1,6 @@
 import streamlit as st
 import json
-from mahjong.svg import id2svg
+from mahjong.display import id2png
 
 st.write("<h3><center>役种一览</center></h3>", unsafe_allow_html=True)
 st.markdown(
@@ -15,7 +15,7 @@ footer {visibility: hidden;}
 .css-1l269bu {max-width:20% !important;}
 [data-testid="stText"] {font-size: 45px}
 .tiles {height:100%; overflow-x:scroll; overflow-y:hidden; white-space: nowrap;margin-top: -10px}
-.tile {width: 40px;height:50px;}
+.tile {height:50px;margin:1px}
 .blank-tile {width: 10px;height:50px;}
 </style>
 """,
@@ -55,5 +55,5 @@ for i in range(7):
             elif kuisagari:
                 st.warning("副露减一番")
             if example:
-                st.write(id2svg(example), unsafe_allow_html=True)
+                st.write(id2png(example), unsafe_allow_html=True)
             st.divider()

@@ -1,7 +1,7 @@
 import re
 import streamlit as st
 from mahjong.score import ScoreCalculator
-from mahjong.svg import str2svg, id2svg
+from mahjong.display import str2png, id2png
 import math
 
 calculator = ScoreCalculator()
@@ -22,7 +22,7 @@ footer {visibility: hidden;}
 .css-1l269bu {max-width:20% !important;}
 pre span {font-size: 30px;}
 .tiles {height:100%; overflow-x:scroll; overflow-y:hidden; white-space: nowrap;margin-top: -15px}
-.tile {width: 40px;height: 50px;}
+.tile {height:50px;margin:1px}
 .blank-tile {width: 10px;height:50px;}
 </style>
 """,
@@ -175,24 +175,24 @@ with st.form(key="mahjong"):
                     id_list = ' ' + ' '.join(map(str, id_list)) + ' '
                     id_list = id_list.replace(' 4 ', ' -1 ', red_count[0]).replace('14', '9', red_count[1]).replace('24', '19', red_count[2])
                     id_list = list(map(int, id_list[1:-1].split(' ')))
-                    st.write(id2svg(id_list[:-1]), unsafe_allow_html=True)
+                    st.write(id2png(id_list[:-1]), unsafe_allow_html=True)
                 else:
-                    st.write(id2svg(calculator.hand_tiles), unsafe_allow_html=True)
+                    st.write(id2png(calculator.hand_tiles), unsafe_allow_html=True)
                 if calculator.called_tiles:
                     st.write("副露")
-                    st.write(str2svg(tiles[re.search(' +', tiles).end():], True), unsafe_allow_html=True)
+                    st.write(str2png(tiles[re.search(' +', tiles).end():], True), unsafe_allow_html=True)
                 col1, col2 = st.columns(2)
                 with col1:
                     st.write("宝牌指示牌")
                     if dora:
-                        st.write(str2svg(dora), unsafe_allow_html=True)
+                        st.write(str2png(dora), unsafe_allow_html=True)
                     else:
                         st.warning("未填入宝牌指示牌")
                 if lichi:
                     with col2:
                         st.write("里宝牌指示牌")
                         if ura_dora:
-                            st.write(str2svg(ura_dora), unsafe_allow_html=True)
+                            st.write(str2png(ura_dora), unsafe_allow_html=True)
                         else:
                             st.warning("未填入里宝牌指示牌")
                 st.write("役种、宝牌")
@@ -206,7 +206,7 @@ with st.form(key="mahjong"):
                         label="和了牌",
                         value=""
                     )
-                    st.write(str2svg(hu_tile), unsafe_allow_html=True)
+                    st.write(str2png(hu_tile), unsafe_allow_html=True)
                 with col2:
                     st.metric(
                         label="符数",
@@ -263,6 +263,6 @@ with st.form(key="mahjong"):
                 is_wait = list(sorted(is_wait))
                 st.info("听牌如下：")
                 st.write("")
-                st.write(id2svg(is_wait), unsafe_allow_html=True)
+                st.write(id2png(is_wait), unsafe_allow_html=True)
         except:
             st.error("输入有误")
