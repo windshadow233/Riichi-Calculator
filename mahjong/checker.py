@@ -170,14 +170,15 @@ class Mahjong:
     def calculate_ready_hand(self, tiles: str, to_unicode=True):
         """
         听牌计算（必须包含雀头或单骑听雀头的情形）
-        万子:1-9m
-        筒子:1-9p
-        索子:1-9s
+        万子:0-9m
+        筒子:0-9p
+        索子:0-9s
         东南西北:1-4z
         白发中:5-7z
         :param tiles: 手牌字符串，若有副露则以空格隔离，例：19m19p19s1234567z，1233m 5555m 789m 123m
         :param to_unicode: 是否将结果转化为易读的字符串
         """
+        tiles = tiles.replace('0', '5')
         hand_tiles, called_tiles = self.str2id(tiles)
         if not self.check_called_tiles(called_tiles):
             return
