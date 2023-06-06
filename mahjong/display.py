@@ -1,6 +1,5 @@
-import base64
 import streamlit as st
-from typing import List, Iterable
+from typing import List
 
 BLANK = """<img class="blank-tile" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E">"""
 
