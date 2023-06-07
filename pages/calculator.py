@@ -261,7 +261,7 @@ with st.form(key="mahjong"):
                 st.warning("没有听牌")
             else:
                 is_wait = list(sorted(is_wait))
-                st.info("听牌如下：")
+                st.info("听牌：")
                 st.write("")
                 st.write(id2png(is_wait), unsafe_allow_html=True)
         except:
