@@ -3,7 +3,7 @@ import json
 from mahjong.display import id2png
 
 st.write("<h3><center>役种一览</center></h3>", unsafe_allow_html=True)
-st.markdown(
+st.write(
     """<style>
 .css-15zrgzn {display: none}
 footer {visibility: hidden;}
