@@ -6,7 +6,7 @@ import math
 
 calculator = ScoreCalculator()
 st.write("<h3><center>一个<del>可能有bug的</del>立直麻将计算器</center></h3>", unsafe_allow_html=True)
-st.markdown(
+st.write(
     """
 <style>
 [data-testid="stMetricValue"] {
