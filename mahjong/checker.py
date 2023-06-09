@@ -2,7 +2,6 @@ import re
 from typing import List, Iterable
 from copy import deepcopy, copy
 from collections import Counter
-import numpy as np
 
 MANS = {0, 1, 2, 3, 4, 5, 6, 7, 8}
 PINS = {10, 11, 12, 13, 14, 15, 16, 17, 18}
