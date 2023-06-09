@@ -149,7 +149,9 @@ class ScoreCalculator:
         self._dealer_wind = [30, 40, 50, 60][dealer_wind - 1]
         self._is_self_draw = is_self_draw
         self.dora = self.checker.str2id(dora)[0]
+        self.dora = list(map(lambda x: x + 5 if x % 10 == 9 else x, self.dora))
         self.ura_dora = self.checker.str2id(ura_dora)[0]
+        self.ura_dora = list(map(lambda x: x + 5 if x % 10 == 9 else x, self.ura_dora))
         self._north_dora = north_dora
         if not self._is_concealed_hand:
             lichi = 0
