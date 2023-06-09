@@ -1,6 +1,6 @@
 import re
 import streamlit as st
-from mahjong.score import ScoreCalculator
+from mahjong.score import ScoreCalculator, AKA_MAN, AKA_PIN, AKA_SOU
 from mahjong.display import str2png, id2png
 import math
 
@@ -9,6 +9,7 @@ st.write("<h3><center>一个<del>可能有bug的</del>立直麻将计算器</cen
 st.write(
     """
 <style>
+#MainMenu {visibility: hidden;}
 [data-testid="stMetricValue"] {
     font-size: 30px;
 }
@@ -173,7 +174,7 @@ with st.form(key="mahjong"):
                     for seq in comb:
                         id_list += [*seq, -3]
                     id_list = ' ' + ' '.join(map(str, id_list)) + ' '
-                    id_list = id_list.replace(' 4 ', ' -1 ', red_count[0]).replace('14', '9', red_count[1]).replace('24', '19', red_count[2])
+                    id_list = id_list.replace(' 4 ', f' {AKA_MAN} ', red_count[0]).replace('14', str(AKA_PIN), red_count[1]).replace('24', str(AKA_SOU), red_count[2])
                     id_list = list(map(int, id_list[1:-1].split(' ')))
                     st.write(id2png(id_list[:-1]), unsafe_allow_html=True)
                 else:
