@@ -37,7 +37,7 @@ def load():
 TABS, NUMBERS, DATA = load()
 
 tabs = st.tabs(
-    [s.center(5, '\u2001') for s in TABS]
+    [s.center(6, '\u2001') for s in TABS]
 )
 
 
