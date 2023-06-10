@@ -30,13 +30,13 @@ class ScoreCalculator:
         self._counter = None
         self._tiles = []
         self._tiles_set = set()
-        self._has_furu = None
-        self._is_concealed_hand = None
+        self._has_furu = False
+        self._is_concealed_hand = False
         self._kuisagari = 0
 
         self._prevailing_wind = None
         self._dealer_wind = None
-        self._is_self_draw = None
+        self._is_self_draw = False
         self._lichi = None
         self.hand_red_dora = []
         self._red_dora = 0
@@ -44,24 +44,24 @@ class ScoreCalculator:
         self.ura_dora = []
         self._north_dora = 0
         self._ippatsu = None
-        self._is_under_the_sea = None
-        self._is_after_a_kong = None
-        self._is_robbing_the_kong = None
-        self._is_blessing_of_heaven = None
-        self._is_blessing_of_earth = None
+        self._is_under_the_sea = False
+        self._is_after_a_kong = False
+        self._is_robbing_the_kong = False
+        self._is_blessing_of_heaven = False
+        self._is_blessing_of_earth = False
 
         self.hu_tile = None
         self.has_yaku = False
         self.hand_tiles, self.called_tiles = [], []
-        self._is_thirteen_orphans = None
+        self._is_thirteen_orphans = False
         self.is_hu = False
         self.combinations = []
         self.max_score_index = None
 
-        self._use_ancient_yaku = None
-        self._is_blessing_of_man = None
-        self._tsubamegaeshi = None
-        self._kanfuri = None
+        self._use_ancient_yaku = False
+        self._is_blessing_of_man = False
+        self._tsubamegaeshi = False
+        self._kanfuri = False
 
         self.fu = self.yaku_list = self.number = self.level = self.score = None
 
@@ -164,7 +164,10 @@ class ScoreCalculator:
         self._is_blessing_of_earth = is_blessing_of_earth and dealer_wind != 1 and is_self_draw and not self._has_furu
 
         self.combinations = list(self.checker.search_combinations(self.hand_tiles, len(self.called_tiles)))
-        self._is_thirteen_orphans = self.thirteen_orphans()
+        if not self.combinations and not self._has_furu:
+            self._is_thirteen_orphans = self.thirteen_orphans()
+        else:
+            self._is_thirteen_orphans = False
         self.is_hu = bool(self.combinations) and self.checker.check_called_tiles(self.called_tiles) or bool(self._is_thirteen_orphans)
         self._use_ancient_yaku = use_ancient_yaku
         self._is_blessing_of_man = is_blessing_of_man and not is_self_draw and dealer_wind != 1 and not self._has_furu
