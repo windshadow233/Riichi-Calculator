@@ -169,12 +169,12 @@ with st.form(key="mahjong"):
                 st.write("最高得点手牌拆分")
                 if calculator.combinations:
                     comb = calculator.combinations[calculator.max_score_index]
-                    red_count = calculator.hand_red_dora
+                    aka_dora_count = calculator.hand_aka_dora
                     id_list = []
                     for seq in comb:
                         id_list += [*seq, -3]
                     id_list = ' ' + ' '.join(map(str, id_list)) + ' '
-                    id_list = id_list.replace(' 4 ', f' {AKA_MAN} ', red_count[0]).replace('14', str(AKA_PIN), red_count[1]).replace('24', str(AKA_SOU), red_count[2])
+                    id_list = id_list.replace(' 4 ', f' {AKA_MAN} ', aka_dora_count[0]).replace('14', str(AKA_PIN), aka_dora_count[1]).replace('24', str(AKA_SOU), aka_dora_count[2])
                     id_list = list(map(int, id_list[1:-1].split(' ')))
                     st.write(id2png(id_list[:-1]), unsafe_allow_html=True)
                 else:
