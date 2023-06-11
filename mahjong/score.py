@@ -329,9 +329,8 @@ class ScoreCalculator:
 
     def small_three_dragons(self):
         """小三元"""
-        if (self._counter[70] == 2 and self._counter[80] >= 3 and self._counter[90] >= 3) or\
-               (self._counter[70] >= 3 and self._counter[80] == 2 and self._counter[90] >= 3) or \
-               (self._counter[70] >= 3 and self._counter[80] >= 3 and self._counter[90] == 2):
+        c = [self._counter[i] for i in DRAGONS]
+        if all(_ >= 2 for _ in c) and c.count(2) == 1:
             return 2
         return 0
 
@@ -610,21 +609,12 @@ class ScoreCalculator:
 
     def four_winds(self):
         """小四喜、大四喜"""
-        called_winds = sum(map(lambda x: x[0] in WINDS, self.called_tiles))
-        n = 0
-        pair = 0
-        for i, combination in enumerate(self.combinations):
-            for tiles in combination:
-                if tiles[0] in WINDS:
-                    if self.checker.is_triplet(tiles):
-                        n += 1
-                    else:
-                        pair += 1
-            if called_winds + n == 3 and pair:
-                self.max_score_index = i
+        c = [self._counter[i] for i in WINDS]
+        if all(_ >= 2 for _ in c):
+            pair_count = c.count(2)
+            if pair_count == 1:
                 return 13
-            if called_winds + n == 4:
-                self.max_score_index = i
+            if pair_count == 0:
                 return 26
         return 0
 
