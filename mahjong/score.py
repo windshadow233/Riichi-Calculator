@@ -38,8 +38,8 @@ class ScoreCalculator:
         self._dealer_wind = None
         self._is_self_draw = False
         self._lichi = None
-        self.hand_red_dora = []
-        self._red_dora = 0
+        self.hand_aka_dora = []
+        self._aka_dora = 0
         self.dora = []
         self.ura_dora = []
         self._north_dora = 0
@@ -88,12 +88,13 @@ class ScoreCalculator:
             kanfuri=False
     ):
         """
-        万子:1-9m
-        筒子:1-9p
-        索子:1-9s
+        万子:0-9m
+        饼子:0-9p
+        索子:0-9s
+        (其中，0是赤宝牌，即红色的5万、5饼、5索)
         东南西北:1-4z
         白发中:5-7z
-        :param tiles: 手牌字符串，若有副露则以空格隔离，例：19m19p19s1234567z，1233m 5555m 789m 123m，赤宝牌以数字0和对应的字母表示
+        :param tiles: 手牌字符串，若有副露则以空格隔离，例：19m19p19s1234567z，1233m 5555m 789m 123m
         :param hu_tile: 和了牌
         :param prevailing_wind: 场风 (东:1, 南:2, 西:3, 北:4)
         :param dealer_wind: 自风 (同上)
@@ -120,16 +121,16 @@ class ScoreCalculator:
         self.hand_tiles, self.called_tiles = self.checker.str2id(self.tiles_str)
         self.hand_tiles.append(self.hu_tile)
 
-        self.hand_red_dora = [self.hand_tiles.count(_) for _ in [AKA_MAN, AKA_PIN, AKA_SOU]]
-        self.hand_tiles = list(sorted(map(lambda x: x + 5 if x % 10 == 9 else x, self.hand_tiles)))
-        self._red_dora = sum(self.hand_red_dora)
+        self.hand_aka_dora = [self.hand_tiles.count(_) for _ in [AKA_MAN, AKA_PIN, AKA_SOU]]
+        self.hand_tiles = list(sorted(map(lambda x: x + 5 if x in AKA_DORA else x, self.hand_tiles)))
+        self._aka_dora = sum(self.hand_aka_dora)
 
         self._hand_counter = Counter(self.hand_tiles)
         self._tiles.extend(self.hand_tiles)
         for i, meld in enumerate(self.called_tiles):
-            red_dora = np.array([meld.count(_) for _ in [AKA_MAN, AKA_PIN, AKA_SOU]]).clip(0, 4)
-            self._red_dora += sum(red_dora)
-            self.called_tiles[i] = meld = list(sorted(map(lambda x: x + 5 if x % 10 == 9 else x, meld)))
+            aka_dora = np.array([meld.count(_) for _ in AKA_DORA]).clip(0, 4)
+            self._aka_dora += sum(aka_dora)
+            self.called_tiles[i] = meld = list(sorted(map(lambda x: x + 5 if x in AKA_DORA else x, meld)))
             if self.checker.is_concealed_kong(meld):
                 self._tiles.extend([meld[0]] * 4)
             else:
@@ -760,7 +761,7 @@ class ScoreCalculator:
         return np.array(values)
 
     def dora_count(self):
-        n = self._north_dora + self._red_dora
+        n = self._north_dora + self._aka_dora
         f = lambda x: x - 8 if x in NINES else ((x // 10 - 2) % 4 + 3) * 10 if x in WINDS else ((x // 10 - 6) % 3 + 7) * 10 if x in DRAGONS else x + 1
         dora = map(f, self.dora)
         counter = copy(self._counter)
