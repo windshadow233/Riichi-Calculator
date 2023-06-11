@@ -27,7 +27,7 @@ footer {visibility: hidden;}
 
 @st.cache_resource
 def load():
-    tabs = ["一番", "二番", "三番", "六番", "满贯", "役满", "双倍役满"]
+    tabs = [s.center(6, '\u2001') for s in ["一番", "二番", "三番", "六番", "满贯", "役满", "双倍役满"]]
     numbers = ['1', '2', '3', '6', '5', '13', '26']
     with open("static/yaku_list.json", encoding='utf-8') as f:
         data = json.loads(f.read())
@@ -35,15 +35,11 @@ def load():
 
 
 TABS, NUMBERS, DATA = load()
-
-tabs = st.tabs(
-    [s.center(6, '\u2001') for s in TABS]
-)
-
+TABS = st.tabs(TABS)
 
 for i in range(7):
     d = DATA[NUMBERS[i]]
-    with tabs[i]:
+    with TABS[i]:
         for item in d:
             name = item.get('name')
             desc = item.get('desc')
