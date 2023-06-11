@@ -9,6 +9,7 @@ SOUS = {20, 21, 22, 23, 24, 25, 26, 27, 28}
 AKA_MAN = -1
 AKA_PIN = 9
 AKA_SOU = 19
+AKA_DORA = {AKA_MAN, AKA_PIN, AKA_SOU}
 ONES = {0, 10, 20}
 NINES = {8, 18, 28}
 TERMINALS = {*ONES, *NINES}
@@ -68,7 +69,7 @@ class Mahjong:
     def str2id(self, tiles: str):
         """
         万子:0-9m
-        筒子:0-9p
+        饼子:0-9p
         索子:0-9s
         东南西北:1-4z
         白发中:5-7z
@@ -170,15 +171,16 @@ class Mahjong:
         """
         听牌计算（必须包含雀头或单骑听雀头的情形）
         万子:0-9m
-        筒子:0-9p
+        饼子:0-9p
         索子:0-9s
         东南西北:1-4z
         白发中:5-7z
         :param tiles: 手牌字符串，若有副露则以空格隔离，例：19m19p19s1234567z，1233m 5555m 789m 123m
         :param to_unicode: 是否将结果转化为易读的字符串
         """
-        tiles = tiles.replace('0', '5')
         hand_tiles, called_tiles = self.str2id(tiles)
+        hand_tiles = list(sorted(map(lambda x: x + 5 if x in AKA_DORA else x, hand_tiles)))
+        called_tiles = [list(sorted(map(lambda x: x + 5 if x in AKA_DORA else x, _))) for _ in called_tiles]
         if not self.check_called_tiles(called_tiles):
             return
         res = set()
