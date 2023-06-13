@@ -1,5 +1,6 @@
 import streamlit as st
 from typing import List
+from mahjong.checker import BACK, AKA_DORA
 
 BLANK = """<img class="blank-tile" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E">"""
 
@@ -67,7 +68,7 @@ def _str2pngid(tiles: str):
         raise ValueError('Wrong string!')
 
     def sort_key(x):
-        return x if x % 10 != 9 else x + 5
+        return x + 5 if x in AKA_DORA else x
 
     m = list(sorted((map(lambda x: int(x) - 1, m)), key=sort_key))
     p = list(sorted(map(lambda x: int(x) + 9, p), key=sort_key))
@@ -91,8 +92,8 @@ def str2png(tiles: str, fold_concealed_kongs=False):
     seqs = str2pngid(tiles)
     id_list = []
     for seq in seqs:
-        if len(seq) == 5 and len(set(seq)) == 1 and fold_concealed_kongs:
-            id_list += [-2, seq[1], seq[2], -2, -3]
+        if len(seq) == 5 and fold_concealed_kongs:
+            id_list += [BACK, seq[1], seq[2], BACK, -3]
         else:
             id_list += seq + [-3]
     return id2png(id_list[:-1])
