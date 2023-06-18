@@ -52,7 +52,7 @@ with st.form(key="mahjong"):
                 image = Image.open(image)
                 groups, res = recognize(image, conf / 100, False)
                 tile_string, hu_string = to_string(groups)
-                st.success("识别结果的图片与文本如下，您可将文本分别复制到'手牌'栏与'和了牌'栏。如有识别错误，请进行手动修改并push开发者优化模型")
+                st.success("识别结果的图片与文本如下，您可将文本分别复制到下方的'牌面'栏与'和了牌'栏。如有识别错误，请进行手动修改并push开发者优化模型")
                 col1, col2 = st.columns(2)
                 with col1:
                     st.image(image, use_column_width=True)
