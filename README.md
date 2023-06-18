@@ -8,4 +8,6 @@
 
 同时为了偷懒，使用了一款非常方便的傻瓜式web框架streamlit。
 
+更新：借助[YOLOv8](https://github.com/ultralytics/ultralytics)训练目标检测网络初步实现识图功能，标注数据偏少，待优化。
+
 体验地址: [立直麻将计算器](https://mahjong.fyz666.xyz)
