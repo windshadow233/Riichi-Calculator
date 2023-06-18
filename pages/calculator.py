@@ -35,7 +35,7 @@ footer {visibility: hidden;}
 with st.form(key="mahjong"):
     with st.expander("拍照识别(beta)", expanded=False):
         st.info("模型正在开发中，在这里打个广告招募数据标注工程师~")
-        st.info("请将手牌横向连续放置于图片靠上的位置，识图功能会将手牌的最后一张识别为和了牌。如有副露，将副露与手牌分开并且两两分开横向放置。考虑到图像有效识别区域的长宽比例，当副露较多时，将它们放置在手牌的下方为佳")
+        st.info("建议横屏拍摄，并将手牌沿水平方向连续放置，识图功能会将手牌的最后一张识别为和了牌。如有副露，将副露与手牌分开并且两两分开横向放置。考虑到图像有效识别区域的长宽比例，当副露较多时，将它们放置在手牌的下方为佳。")
         image = st.file_uploader(
             label="选取相册图片或拍照上传",
             type=("jpg", "jpeg", "png")
@@ -51,7 +51,7 @@ with st.form(key="mahjong"):
                 image = Image.open(image)
                 groups, res = recognize(image, conf / 100, False)
                 tile_string, hu_string = to_string(groups)
-                st.success("识别结果的图片与文本如下，您可将文本分别复制到下方的'牌面'栏与'和了牌'栏。如有识别错误，请进行手动修改并push开发者优化模型")
+                st.success("识别结果的图片与文本如下，您可将文本分别复制到下方的'牌面'栏与'和了牌'栏。如有识别错误，请进行手动修改并push开发者优化模型。")
                 col1, col2 = st.columns(2)
                 with col1:
                     st.image(image, use_column_width=True)
@@ -63,7 +63,7 @@ with st.form(key="mahjong"):
                 with col2:
                     st.code(hu_string, language=None)
             except:
-                st.warning('请告知开发者：什么垃圾模型根本识别不了')
+                st.warning('未能检测到麻将牌，建议push开发者优化模型')
     col1, col2 = st.columns([5, 1])
     with col1:
         tiles = st.text_input(
