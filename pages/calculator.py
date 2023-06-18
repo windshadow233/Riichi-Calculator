@@ -35,7 +35,7 @@ footer {visibility: hidden;}
 with st.form(key="mahjong"):
     with st.expander("拍照识别(beta)", expanded=False):
         st.info("模型正在开发中，在这里打个广告招募数据标注工程师~")
-        st.info("请将手牌横向连续放置于图片靠上的位置，识图功能会将手牌的最后一张识别为和了牌。如有副露，将副露与手牌分开并且两两分开横向放置。考虑到图像的宽度有限，副露较多时，将它们放置在手牌的下方为佳")
+        st.info("请将手牌横向连续放置于图片靠上的位置，识图功能会将手牌的最后一张识别为和了牌。如有副露，将副露与手牌分开并且两两分开横向放置。考虑到图像有效识别区域的长宽比例，当副露较多时，将它们放置在手牌的下方为佳")
         tile_string = hu_string = ''
         image = st.file_uploader(
             label="选取相册图片或拍照上传",
