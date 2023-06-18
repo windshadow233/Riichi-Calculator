@@ -36,7 +36,6 @@ with st.form(key="mahjong"):
     with st.expander("拍照识别(beta)", expanded=False):
         st.info("模型正在开发中，在这里打个广告招募数据标注工程师~")
         st.info("请将手牌横向连续放置于图片靠上的位置，识图功能会将手牌的最后一张识别为和了牌。如有副露，将副露与手牌分开并且两两分开横向放置。考虑到图像有效识别区域的长宽比例，当副露较多时，将它们放置在手牌的下方为佳")
-        tile_string = hu_string = ''
         image = st.file_uploader(
             label="选取相册图片或拍照上传",
             type=("jpg", "jpeg", "png")
@@ -77,7 +76,7 @@ with st.form(key="mahjong"):
                  "'30m11p 123p 55555z 6666s'，并且在后面的'和了牌'一栏填写'4m'"
         ).strip()
     with col2:
-        hu_tile = st.text_input(label="和了牌", help="表示方法与'牌面'相同，只填一张牌（听牌计算时不需要填写）")
+        hu_tile = st.text_input(label="和了牌", help="表示方法与'牌面'相同，只填一张牌（听牌计算时不需要填写）", max_chars=2)
     col1, col2 = st.columns(2)
     with col1:
         dora = st.text_input(
