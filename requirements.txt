@@ -2,3 +2,4 @@ numpy
 streamlit
 st-pages
 ultralytics
+sklearn
