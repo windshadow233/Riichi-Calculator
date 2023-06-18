@@ -39,18 +39,18 @@ with st.form(key="mahjong"):
         tile_string = hu_string = ''
         image = st.file_uploader(
             label="选取相册图片或拍照上传",
-            type=("jpg", "jpeg", "png", 'bmp', 'webp')
+            type=("jpg", "jpeg", "png")
         )
         col1, col2 = st.columns(2)
         with col1:
             btn = st.form_submit_button(label="识别图片")
         with col2:
-            conf = st.slider(label="置信度阈值", min_value=0.1, max_value=0.9, value=0.5, step=0.05)
+            conf = st.slider(label="置信度阈值", min_value=10, max_value=90, value=50, step=5, format="%d%%", help="置信度小于该值的检测结果将被忽略")
     if btn and image:
         with st.spinner('正在努力识别中，请稍等片刻'):
             try:
                 image = Image.open(image)
-                groups, res = recognize(image, conf, False)
+                groups, res = recognize(image, conf / 100, False)
                 tile_string, hu_string = to_string(groups)
                 st.success("识别结果的图片与文本如下，您可将文本分别复制到'手牌'栏与'和了牌'栏。如有识别错误，请进行手动修改并push开发者优化模型")
                 col1, col2 = st.columns(2)
