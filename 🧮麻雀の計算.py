@@ -284,7 +284,7 @@ with st.form(key="mahjong"):
 
     col1, col2 = st.columns(2)
     with col1:
-        btn1 = st.form_submit_button(label="和牌计算")
+        btn1 = st.form_submit_button(label="和牌计算", type='primary')
     with col2:
         btn2 = st.form_submit_button(label="听牌计算")
 
