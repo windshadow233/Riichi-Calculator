@@ -6,6 +6,10 @@ from mahjong.display import str2png, id2png
 from detection.detect import recognize, to_string
 from PIL import Image
 
+st.set_page_config(
+    page_title="麻雀の計算",
+    page_icon="🧮",
+)
 calculator = ScoreCalculator()
 st.write("<h3><center>一个<del>可能有bug的</del>立直麻将计算器</center></h3>", unsafe_allow_html=True)
 st.write(

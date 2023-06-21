@@ -1,5 +1,4 @@
 numpy
 streamlit
-st-pages
 ultralytics
 scikit-learn

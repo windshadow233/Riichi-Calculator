@@ -2,6 +2,10 @@ import streamlit as st
 import json
 from mahjong.display import id2png
 
+st.set_page_config(
+    page_title="役种一览.",
+    page_icon="📋",
+)
 st.write("<h3><center>役种一览</center></h3>", unsafe_allow_html=True)
 st.write("<p align='right'>仅收录了游戏《雀魂》中支持的役种</p>", unsafe_allow_html=True)
 st.write(
