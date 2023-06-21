@@ -1055,7 +1055,7 @@ class ScoreCalculator:
             score = 8000
             level = TOTAL_YAKU_MAN
         if dora_count:
-            yaku.append(f'DORA {dora_count}')
+            yaku.append(f'ドラ {dora_count}')
         return fu, common_yaku_list + yaku, int(number), level, int(score)
 
 
