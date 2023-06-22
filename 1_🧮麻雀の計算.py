@@ -3,7 +3,7 @@ import streamlit as st
 import math
 from mahjong.score import ScoreCalculator, AKA_MAN, AKA_PIN, AKA_SOU
 from mahjong.display import str2png, id2png
-from detection.detect import recognize, to_string
+from detection.detect import load_model, recognize, to_string
 from PIL import Image
 
 st.set_page_config(
@@ -35,7 +35,6 @@ footer {visibility: hidden;}
     unsafe_allow_html=True,
 )
 
-
 with st.form(key="mahjong"):
     with st.expander("拍照识别(beta)", expanded=False):
         st.info("模型正在开发中，在这里打个广告招募数据标注工程师~")
@@ -53,7 +52,8 @@ with st.form(key="mahjong"):
         with st.spinner('正在努力识别中，请稍等片刻'):
             try:
                 image = Image.open(image)
-                groups, res = recognize(image, conf / 100, False)
+                model = load_model()
+                groups, res = recognize(model, image, conf / 100, False)
                 tile_string, hu_string = to_string(groups)
                 st.success("识别结果的图片与文本如下，您可将文本分别复制到下方的'牌面'栏与'和了牌'栏。如有识别错误，请进行手动修改并push开发者优化模型。")
                 col1, col2 = st.columns(2)
