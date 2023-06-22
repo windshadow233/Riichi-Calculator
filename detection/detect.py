@@ -13,8 +13,6 @@ def load_model():
     return model
 
 
-MODEL = load_model()
-
 IDS = {
     0: AKA_MAN, 1: AKA_PIN, 2: AKA_SOU, 3: BACK,
     **{_ // 10 + 35: _ for _ in NINES},
@@ -57,8 +55,8 @@ def horizontal_split(boxes):
     return groups
 
 
-def recognize(file, conf=0.5, to_str=True, display=True):
-    output = MODEL.predict(source=file, conf=conf)[0]
+def recognize(model, file, conf=0.5, to_str=True, display=True):
+    output = model.predict(source=file, conf=conf)[0]
     boxes = output.boxes
     res_plotted = None
     if display:
