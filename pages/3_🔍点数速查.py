@@ -205,9 +205,12 @@ table2 = """<table class="wikitable" style="text-align:center">
 <td colspan="11"><span style="font-size: 110%;"><b>累计役满</b>/<b>役满</b></span><br><span style="font-size: 110%;"><b>32000</b></span><br>(8000,<br>16000)</td></tr></tbody></table>
 """
 st.write(style, unsafe_allow_html=True)
+st.info("为方便通过符番数快速得出点数，这里将维基百科「日本麻將計分方法」中的速查表抄了过来，如下所示")
 tabs = [s.center(6, '\u2001') for s in ['亲家', '子家']]
 tab1, tab2 = st.tabs(tabs)
 with tab1:
+    st.info("括号内是自摸和了时每位子家的支付点数")
     st.write(table1, unsafe_allow_html=True)
 with tab2:
+    st.info("括号内是自摸和了时别家的支付点数。上段是子家，下段是亲家")
     st.write(table2, unsafe_allow_html=True)
