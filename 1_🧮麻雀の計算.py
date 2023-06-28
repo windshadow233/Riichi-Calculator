@@ -268,13 +268,13 @@ with st.form(key="mahjong"):
                     if is_self_draw:
                         score_info = f"每人支付東家「{math.ceil(2 * calculator.score / 100) * 100 + 100 * game_number}」点"
                     else:
-                        score_info = f"放铳者支付東家「{math.ceil(6 * calculator.score / 100) * 100 + 300 * game_number}」点"
+                        score_info = f"放铳者支付東家「{math.ceil(6 * calculator.score / 100) * 100 + 300 * game_number}」点（三麻「{math.ceil(6 * calculator.score / 100) * 100 + 200 * game_number}」点）"
                 else:
                     if is_self_draw:
                         score_info = f"東家支付{dealer_wind_str}家「{math.ceil(2 * calculator.score / 100) * 100 + 100 * game_number}」点，" \
                                      f"其他人各支付{dealer_wind_str}家「{math.ceil(calculator.score / 100) * 100 + 100 * game_number}」点"
                     else:
-                        score_info = f"放铳者支付{dealer_wind_str}家「{math.ceil(4 * calculator.score / 100) * 100 + 300 * game_number}」点"
+                        score_info = f"放铳者支付{dealer_wind_str}家「{math.ceil(4 * calculator.score / 100) * 100 + 300 * game_number}」点（三麻「{math.ceil(4 * calculator.score / 100) * 100 + 200 * game_number}」点）"
                 st.success(score_info)
             else:
                 st.warning("没有和牌")
