@@ -104,12 +104,12 @@ with st.form(key="mahjong"):
             horizontal=True
         )
         dealer_wind = ['東', '南', '西', '北'].index(dealer_wind_str) + 1
-    lichi = st.radio(
+    riichi = st.radio(
             label="立直情况",
             options=['无', '立直', '两立直'],
             horizontal=True
         )
-    lichi = ['无', '立直', '两立直'].index(lichi)
+    riichi = ['无', '立直', '两立直'].index(riichi)
     col1, col2, col3 = st.columns(3)
     with col1:
         is_self_draw = st.checkbox(
@@ -188,7 +188,7 @@ with st.form(key="mahjong"):
                 prevailing_wind=prevailing_wind,
                 dealer_wind=dealer_wind,
                 is_self_draw=is_self_draw,
-                lichi=lichi,
+                riichi=riichi,
                 dora=dora,
                 ura_dora=ura_dora,
                 north_dora=north_dora,
@@ -227,7 +227,7 @@ with st.form(key="mahjong"):
                         st.write(str2png(dora), unsafe_allow_html=True)
                     else:
                         st.warning("未填入宝牌指示牌")
-                if lichi:
+                if riichi:
                     with col2:
                         st.write("里宝牌指示牌")
                         if ura_dora:
