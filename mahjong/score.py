@@ -37,7 +37,7 @@ class ScoreCalculator:
         self._prevailing_wind = None
         self._dealer_wind = None
         self._is_self_draw = False
-        self._lichi = None
+        self._riichi = None
         self.hand_aka_dora = []
         self._aka_dora = 0
         self.dora = []
@@ -72,7 +72,7 @@ class ScoreCalculator:
             prevailing_wind,
             dealer_wind,
             is_self_draw,
-            lichi,
+            riichi,
             dora,
             ura_dora,
             north_dora=0,
@@ -99,11 +99,11 @@ class ScoreCalculator:
         :param prevailing_wind: 场风 (东:1, 南:2, 西:3, 北:4)
         :param dealer_wind: 自风 (同上)
         :param is_self_draw: 是否自摸
-        :param lichi: 立直时值为1, 两立直时值为2, 否则为0 (非门清状态下此参数无效)
+        :param riichi: 立直时值为1, 两立直时值为2, 否则为0 (非门清状态下此参数无效)
         :param dora: 宝牌指示牌(包含宝牌、杠宝牌)
         :param ura_dora: 里宝牌指示牌(包含里宝牌、杠里宝牌)
         :param north_dora: 拔北宝牌数(三麻限定，拔北宝牌数)
-        :param ippatsu: 是否为一发(当lichi为0时,此参数无效)
+        :param ippatsu: 是否为一发(当riichi为0时,此参数无效)
         :param is_under_the_sea: 是否为海底捞月、河底捞鱼
         :param is_after_a_kong: 是否为岭上开花(当is_self_draw为False或副露无杠时,此参数无效)
         :param is_robbing_the_kong: 是否为抢杠(当is_self_draw为True或手牌有此牌时,此参数无效)
@@ -155,9 +155,9 @@ class ScoreCalculator:
         self.ura_dora = list(map(lambda x: x + 5 if x % 10 == 9 else x, self.ura_dora))
         self._north_dora = north_dora
         if not self._is_concealed_hand:
-            lichi = 0
-        self._lichi = lichi
-        self._ippatsu = ippatsu and bool(lichi)
+            riichi = 0
+        self._riichi = riichi
+        self._ippatsu = ippatsu and bool(riichi)
         self._is_under_the_sea = is_under_the_sea
         self._is_after_a_kong = is_after_a_kong and is_self_draw and any(self.checker.is_kong(_) for _ in self.called_tiles)
         self._is_robbing_the_kong = is_robbing_the_kong and not is_self_draw and self._counter[self.hu_tile] == 1
@@ -206,7 +206,7 @@ class ScoreCalculator:
         if self.is_hu:
             s += f'\n和了牌: {ID2UNICODE[self.hu_tile]}'
             s += f'\n宝牌指示牌: {self.dora_unicode()}'
-            if self._lichi:
+            if self._riichi:
                 s += f'\n里宝牌指示牌: {self.ura_dora_unicode()}'
             s += f'\n符数: {self.fu}'
             s += '\n役种、宝牌: ' + '、'.join(self.yaku_list)
@@ -678,7 +678,7 @@ class ScoreCalculator:
 
     def three_years_on_stone(self):
         """古役 石上三年"""
-        if self._lichi == 2 and self._is_under_the_sea:
+        if self._riichi == 2 and self._is_under_the_sea:
             return 13
         return 0
 
@@ -767,7 +767,7 @@ class ScoreCalculator:
         counter = copy(self._counter)
         counter.update([60] * self._north_dora)
         n += sum(counter[_] for _ in dora)
-        if self._lichi:
+        if self._riichi:
             ura_dora = map(f, self.ura_dora)
             n += sum(counter[_] for _ in ura_dora)
         return n
@@ -895,10 +895,10 @@ class ScoreCalculator:
                 common_yaku_list.append('杠振(1番)')
                 number += 1
         yaku_list: List[List[str]] = [[] for _ in self.combinations]
-        number += self._lichi
-        if self._lichi == 1:
+        number += self._riichi
+        if self._riichi == 1:
             common_yaku_list.append('立直(1番)')
-        elif self._lichi == 2:
+        elif self._riichi == 2:
             common_yaku_list.append('两立直(2番)')
         if self._ippatsu:
             common_yaku_list.append('一发(1番)')
@@ -1067,7 +1067,7 @@ if __name__ == '__main__':
         prevailing_wind=1,
         dealer_wind=1,
         is_self_draw=0,
-        lichi=2,
+        riichi=2,
         dora='363z99s',
         ura_dora='99s336z',
         north_dora=4,
