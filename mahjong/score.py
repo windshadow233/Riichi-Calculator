@@ -878,8 +878,9 @@ class ScoreCalculator:
                 if self._use_ancient_yaku and self.cyupinraoyui():
                     common_yaku_list.append('九筒捞鱼(5番)')
                     n = 5
-                common_yaku_list.append('河底捞鱼(1番)')
-                n = 1
+                else:
+                    common_yaku_list.append('河底捞鱼(1番)')
+                    n = 1
             number += n
         if self._is_after_a_kong:
             common_yaku_list.append('岭上开花(1番)')
