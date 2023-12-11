@@ -3,8 +3,8 @@ import streamlit as st
 import math
 from mahjong.score import ScoreCalculator, AKA_MAN, AKA_PIN, AKA_SOU
 from mahjong.display import str2png, id2png
-from detection.detect import load_model, recognize, to_string
-from PIL import Image
+# from detection.detect import load_model, recognize, to_string
+# from PIL import Image
 
 st.set_page_config(
     page_title="麻雀の計算",
@@ -36,38 +36,38 @@ footer {visibility: hidden;}
 )
 
 with st.form(key="mahjong"):
-    with st.expander("拍照识别(beta)", expanded=False):
-        st.info("模型正在开发中，在这里打个广告招募数据标注工程师~")
-        st.info("建议横屏拍摄，并将手牌沿水平方向连续放置，识图功能会将手牌的最后一张识别为和了牌。如有副露，将副露与手牌分开并且两两分开横向放置。考虑到图像有效识别区域的长宽比例，当副露较多时，将它们放置在手牌的下方为佳。")
-        image = st.file_uploader(
-            label="选取相册图片或拍照上传",
-            type=("jpg", "jpeg", "png")
-        )
-        col1, col2 = st.columns(2)
-        with col1:
-            btn = st.form_submit_button(label="识别图片")
-        with col2:
-            conf = st.slider(label="置信度阈值", min_value=10, max_value=90, value=50, step=5, format="%d%%", help="置信度小于该值的检测结果将被忽略")
-    if btn and image:
-        with st.spinner('正在努力识别中，请稍等片刻'):
-            try:
-                image = Image.open(image)
-                model = load_model()
-                groups, res = recognize(model, image, conf / 100, False)
-                tile_string, hu_string = to_string(groups)
-                st.success("识别结果的图片与文本如下，您可将文本分别复制到下方的'牌面'栏与'和了牌'栏。如有识别错误，请进行手动修改并push开发者优化模型。")
-                col1, col2 = st.columns(2)
-                with col1:
-                    st.image(image, use_column_width=True)
-                with col2:
-                    st.image(res, use_column_width=True)
-                col1, col2 = st.columns([5, 1])
-                with col1:
-                    st.code(tile_string, language=None)
-                with col2:
-                    st.code(hu_string, language=None)
-            except:
-                st.warning('未能检测到麻将牌，建议push开发者优化模型')
+    # with st.expander("拍照识别(beta)", expanded=False):
+    #     st.info("模型正在开发中，在这里打个广告招募数据标注工程师~")
+    #     st.info("建议横屏拍摄，并将手牌沿水平方向连续放置，识图功能会将手牌的最后一张识别为和了牌。如有副露，将副露与手牌分开并且两两分开横向放置。考虑到图像有效识别区域的长宽比例，当副露较多时，将它们放置在手牌的下方为佳。")
+    #     image = st.file_uploader(
+    #         label="选取相册图片或拍照上传",
+    #         type=("jpg", "jpeg", "png")
+    #     )
+    #     col1, col2 = st.columns(2)
+    #     with col1:
+    #         btn = st.form_submit_button(label="识别图片")
+    #     with col2:
+    #         conf = st.slider(label="置信度阈值", min_value=10, max_value=90, value=50, step=5, format="%d%%", help="置信度小于该值的检测结果将被忽略")
+    # if btn and image:
+    #     with st.spinner('正在努力识别中，请稍等片刻'):
+    #         try:
+    #             image = Image.open(image)
+    #             model = load_model()
+    #             groups, res = recognize(model, image, conf / 100, False)
+    #             tile_string, hu_string = to_string(groups)
+    #             st.success("识别结果的图片与文本如下，您可将文本分别复制到下方的'牌面'栏与'和了牌'栏。如有识别错误，请进行手动修改并push开发者优化模型。")
+    #             col1, col2 = st.columns(2)
+    #             with col1:
+    #                 st.image(image, use_column_width=True)
+    #             with col2:
+    #                 st.image(res, use_column_width=True)
+    #             col1, col2 = st.columns([5, 1])
+    #             with col1:
+    #                 st.code(tile_string, language=None)
+    #             with col2:
+    #                 st.code(hu_string, language=None)
+    #         except:
+    #             st.warning('未能检测到麻将牌，建议push开发者优化模型')
     col1, col2 = st.columns([5, 1])
     with col1:
         tiles = st.text_input(
@@ -164,13 +164,19 @@ with st.form(key="mahjong"):
             )
     col1, col2 = st.columns(2)
     with col1:
-        north_dora = st.number_input(
-            label="拔北宝牌数量",
-            min_value=0,
-            value=0,
-            step=1,
-            help="三麻限定"
-        )
+        col3, col4 = st.columns(2)
+        with col3:
+            is_three_player_game = st.checkbox(
+                label="三人麻将？"
+            )
+        with col4:
+            north_dora = st.number_input(
+                label="拔北宝牌数量",
+                min_value=0,
+                value=0,
+                step=1,
+                help="三麻限定"
+            )
     with col2:
         game_number = st.number_input(
             label="本场数",
@@ -193,6 +199,7 @@ with st.form(key="mahjong"):
                 ura_dora=ura_dora,
                 north_dora=north_dora,
                 ippatsu=ippatsu,
+                is_three_player_game=is_three_player_game,
                 is_under_the_sea=is_under_the_sea,
                 is_after_a_kong=is_after_a_kong,
                 is_robbing_the_kong=is_robbing_the_kong,
