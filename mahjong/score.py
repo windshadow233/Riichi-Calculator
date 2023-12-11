@@ -44,6 +44,7 @@ class ScoreCalculator:
         self.ura_dora = []
         self._north_dora = 0
         self._ippatsu = None
+        self._is_three_player_game = False
         self._is_under_the_sea = False
         self._is_after_a_kong = False
         self._is_robbing_the_kong = False
@@ -77,6 +78,7 @@ class ScoreCalculator:
             ura_dora,
             north_dora=0,
             ippatsu=False,
+            is_three_player_game=False,
             is_under_the_sea=False,
             is_after_a_kong=False,
             is_robbing_the_kong=False,
@@ -104,6 +106,7 @@ class ScoreCalculator:
         :param ura_dora: 里宝牌指示牌(包含里宝牌、杠里宝牌)
         :param north_dora: 拔北宝牌数(三麻限定，拔北宝牌数)
         :param ippatsu: 是否为一发(当riichi为0时,此参数无效)
+        :param is_three_player_game: 是否为三麻
         :param is_under_the_sea: 是否为海底捞月、河底捞鱼
         :param is_after_a_kong: 是否为岭上开花(当is_self_draw为False或副露无杠时,此参数无效)
         :param is_robbing_the_kong: 是否为抢杠(当is_self_draw为True或手牌有此牌时,此参数无效)
@@ -124,6 +127,7 @@ class ScoreCalculator:
         self.hand_aka_dora = [self.hand_tiles.count(_) for _ in [AKA_MAN, AKA_PIN, AKA_SOU]]
         self.hand_tiles = list(sorted(map(lambda x: x + 5 if x in AKA_DORA else x, self.hand_tiles)))
         self._aka_dora = sum(self.hand_aka_dora)
+        self._is_three_player_game = is_three_player_game
 
         self._hand_counter = Counter(self.hand_tiles)
         self._tiles.extend(self.hand_tiles)
@@ -138,6 +142,8 @@ class ScoreCalculator:
         self._counter = Counter(self._tiles)
         if any(n > 4 for n in self._counter.values()):
             return
+        if not self._is_three_player_game:
+            north_dora = 0
         if north_dora + self._counter[60] > 4:
             return
         if not 18 >= len(self._tiles) >= 14:
@@ -760,15 +766,25 @@ class ScoreCalculator:
             values.append(math.ceil(value / 10) * 10)
         return np.array(values)
 
+    def _calc_dora(self, x):
+        if x in NINES:
+            return x - 8
+        if x in WINDS:
+            return ((x // 10 - 2) % 4 + 3) * 10
+        if x in DRAGONS:
+            return ((x // 10 - 6) % 3 + 7) * 10
+        if x == 0 and self._is_three_player_game:
+            return 8
+        return x + 1
+
     def dora_count(self):
         n = self._north_dora + self._aka_dora
-        f = lambda x: x - 8 if x in NINES else ((x // 10 - 2) % 4 + 3) * 10 if x in WINDS else ((x // 10 - 6) % 3 + 7) * 10 if x in DRAGONS else x + 1
-        dora = map(f, self.dora)
+        dora = map(self._calc_dora, self.dora)
         counter = copy(self._counter)
         counter.update([60] * self._north_dora)
         n += sum(counter[_] for _ in dora)
         if self._riichi:
-            ura_dora = map(f, self.ura_dora)
+            ura_dora = map(self._calc_dora, self.ura_dora)
             n += sum(counter[_] for _ in ura_dora)
         return n
 
