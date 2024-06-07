@@ -1,11 +1,9 @@
-import streamlit as st
 from typing import List
 from mahjong.checker import BACK, AKA_DORA
 
 BLANK = """<img class="blank-tile" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E">"""
 
 
-@st.cache_resource
 def load_png():
     pngs = {}
     for i in range(9):
