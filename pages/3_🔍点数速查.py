@@ -100,7 +100,7 @@ table1 = """<table class="wikitable" style="text-align: center; border-style: no
 <td><b>7700</b><br>(2600)</td>
 <td><b>9600</b><br>(3200)</td>
 <td style="background-color:#ff8;"><span style="color:#005090;"><b>11600</b><br>(3900)</span></td>
-<td colspan="5" rowspan="1" style="border-bottom-color: #f8f9fa;">
+<td colspan="5" rowspan="1" style="border-bottom-color: black;">
 </td></tr>
 <tr>
 <th>4番</th>
@@ -108,7 +108,7 @@ table1 = """<table class="wikitable" style="text-align: center; border-style: no
 <td><b>9600</b><br>(3200)</td>
 <td style="background-color: #ff8;"><span style="color:#005090;"><b>11600</b><br>(3900)</span>
 </td>
-<td colspan="8" rowspan="1" style="border-bottom-color: #f8f9fa;"><span style="font-size: 110%;"><b>满贯</b></span><br><span style="font-size: 110%;"><b>12000</b></span><br>(4000)
+<td colspan="8" rowspan="1" style="border-bottom-color: black;"><span style="font-size: 110%;"><b>满贯</b></span><br><span style="font-size: 110%;"><b>12000</b></span><br>(4000)
 </td></tr>
 <tr>
 <th>5番</th>
@@ -180,14 +180,14 @@ table2 = """<table class="wikitable" style="text-align:center">
 <td><b>5200</b><br>(1300,<br>2600)</td>
 <td><b>6400</b><br>(1600,<br>3200)</td>
 <td style="background-color: #ff8;"><span style="color:#005090;"><b>7700</b><br>(2000,<br>3900)</span></td>
-<td colspan="5" rowspan="1" style="border-bottom-color: #f8f9fa;">
+<td colspan="5" rowspan="1" style="border-bottom-color: black;">
 </td></tr>
 <tr>
 <th>4番</th>
 <td>- <br>(1300,<br>2600)</td>
 <td><b>6400</b><br>(1600,<br>3200)</td>
 <td style="background-color: #ff8;"><span style="color:#005090;"><b>7700</b><br>(2000,<br>3900)</span></td>
-<td colspan="8" rowspan="1" style="border-bottom-color: #f8f9fa;"><span style="font-size: 110%;"><b>满贯</b></span><br><span style="font-size: 110%;"><b>8000</b></span><br>(2000,<br>4000)
+<td colspan="8" rowspan="1" style="border-bottom-color: black;"><span style="font-size: 110%;"><b>满贯</b></span><br><span style="font-size: 110%;"><b>8000</b></span><br>(2000,<br>4000)
 </td></tr>
 <tr>
 <th>5番</th>
