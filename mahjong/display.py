@@ -7,31 +7,31 @@ BLANK = """<img class="blank-tile" src="data:image/svg+xml,%3Csvg xmlns='http://
 def load_png():
     pngs = {}
     for i in range(9):
-        pngs[i] = f"app/static/png/{i + 1}man.png"
-    pngs[-1] = "app/static/png/akaman.png"
+        pngs[i] = f"https://fastly.jsdelivr.net/gh/windshadow233/Riichi-Calculator/static/png/{i + 1}man.png"
+    pngs[-1] = "https://fastly.jsdelivr.net/gh/windshadow233/Riichi-Calculator/static/png/akaman.png"
     for i in range(10, 19):
-        pngs[i] = f"app/static/png/{i - 9}pin.png"
-    pngs[9] = "app/static/png/akapin.png"
+        pngs[i] = f"https://fastly.jsdelivr.net/gh/windshadow233/Riichi-Calculator/static/png/{i - 9}pin.png"
+    pngs[9] = "https://fastly.jsdelivr.net/gh/windshadow233/Riichi-Calculator/static/png/akapin.png"
 
     for i in range(20, 29):
-        pngs[i] = f"app/static/png/{i - 19}sou.png"
-    pngs[19] = "app/static/png/akasou.png"
+        pngs[i] = f"https://fastly.jsdelivr.net/gh/windshadow233/Riichi-Calculator/static/png/{i - 19}sou.png"
+    pngs[19] = "https://fastly.jsdelivr.net/gh/windshadow233/Riichi-Calculator/static/png/akasou.png"
 
-    pngs[30] = "app/static/png/tan.png"
+    pngs[30] = "https://fastly.jsdelivr.net/gh/windshadow233/Riichi-Calculator/static/png/tan.png"
 
-    pngs[40] = "app/static/png/nan.png"
+    pngs[40] = "https://fastly.jsdelivr.net/gh/windshadow233/Riichi-Calculator/static/png/nan.png"
 
-    pngs[50] = "app/static/png/xia.png"
+    pngs[50] = "https://fastly.jsdelivr.net/gh/windshadow233/Riichi-Calculator/static/png/xia.png"
 
-    pngs[60] = "app/static/png/pei.png"
+    pngs[60] = "https://fastly.jsdelivr.net/gh/windshadow233/Riichi-Calculator/static/png/pei.png"
 
-    pngs[70] = "app/static/png/haku.png"
+    pngs[70] = "https://fastly.jsdelivr.net/gh/windshadow233/Riichi-Calculator/static/png/haku.png"
 
-    pngs[80] = "app/static/png/hatsu.png"
+    pngs[80] = "https://fastly.jsdelivr.net/gh/windshadow233/Riichi-Calculator/static/png/hatsu.png"
 
-    pngs[90] = "app/static/png/chun.png"
+    pngs[90] = "https://fastly.jsdelivr.net/gh/windshadow233/Riichi-Calculator/static/png/chun.png"
 
-    pngs[-2] = "app/static/png/back.png"
+    pngs[-2] = "https://fastly.jsdelivr.net/gh/windshadow233/Riichi-Calculator/static/png/back.png"
     return pngs
 
 
