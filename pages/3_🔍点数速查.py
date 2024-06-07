@@ -25,6 +25,8 @@ footer {visibility: hidden;}
 .wikitable > tr > th, .wikitable > tr > td, .wikitable > * > tr > th, .wikitable > * > tr > td {
     border: 1px solid #a2a9b1;
     padding: 0.2em 0.4em;
+    background: black;
+    color: white;
 }
 th {
     display: table-cell;
