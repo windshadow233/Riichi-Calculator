@@ -1,0 +1,13 @@
+name: Keep app awake
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # 每天的 00:00 UTC 触发一次
+
+jobs:
+  curl_request:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Make curl request
+      run: curl "https://riichi.streamlit.app/?embedded=true"
