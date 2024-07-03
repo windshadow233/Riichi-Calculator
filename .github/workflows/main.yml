@@ -3,6 +3,7 @@ name: Daily Commit
 on:
   schedule:
     - cron: '0 16 * * *'
+  workflow_dispatch:
 
 jobs:
   make_commit:
