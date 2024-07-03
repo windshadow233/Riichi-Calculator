@@ -15,5 +15,7 @@ jobs:
 
       - name: Make empty commit
         run: |
+          git config --global user.email "50669888+windshadow233@users.noreply.github.com"
+          git config --global user.name "windshadow233"
           git commit --allow-empty -m "Daily empty commit"
           git push
