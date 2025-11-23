@@ -167,11 +167,11 @@ with st.form(key="mahjong"):
         col3, col4 = st.columns(2)
         with col3:
             is_three_player_game = st.checkbox(
-                label="三人麻将？"
+                label="三麻？"
             )
         with col4:
             north_dora = st.number_input(
-                label="拔北宝牌数量",
+                label="拔北宝牌",
                 min_value=0,
                 value=0,
                 step=1,
