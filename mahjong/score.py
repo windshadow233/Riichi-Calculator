@@ -1,22 +1,26 @@
-from mahjong.checker import *
+from enum import Enum, auto
 import numpy as np
 import math
+from mahjong.checker import *
 
-NONE = 0
-MAN_GAN = 1
-HANE_MAN = 2
-BAI_MAN = 3
-SAN_BAI_MAN = 4
-YAKU_MAN = 5
-TOTAL_YAKU_MAN = 6
+
+class ScoreLevel(Enum):
+    NONE = auto()
+    MAN_GAN = auto()
+    HANE_MAN = auto()
+    BAI_MAN = auto()
+    SAN_BAI_MAN = auto()
+    YAKU_MAN = auto()
+    KAZO_E_YAKU_MAN = auto()
+
 
 SCORE_LEVELS = {
-    MAN_GAN: '满贯',
-    HANE_MAN: '跳满',
-    BAI_MAN: '倍满',
-    SAN_BAI_MAN: '三倍满',
-    YAKU_MAN: '役满',
-    TOTAL_YAKU_MAN: '累计役满'
+    ScoreLevel.MAN_GAN: '满贯',
+    ScoreLevel.HANE_MAN: '跳满',
+    ScoreLevel.BAI_MAN: '倍满',
+    ScoreLevel.SAN_BAI_MAN: '三倍满',
+    ScoreLevel.YAKU_MAN: '役满',
+    ScoreLevel.KAZO_E_YAKU_MAN: '累计役满'
 }
 
 
@@ -183,7 +187,7 @@ class ScoreCalculator:
         if self.is_hu:
             self.fu, self.yaku_list, self.number, self.level, self.score = self.calculate()
 
-        if self.level == YAKU_MAN and self.score > 8000:
+        if self.level == ScoreLevel.YAKU_MAN and self.score > 8000:
             number = self.score // 8000
             self.level = f'{number}倍役满'
         else:
@@ -879,7 +883,7 @@ class ScoreCalculator:
             fu = np.max(fu)
             if self.max_score_index is None:
                 self.max_score_index = 0
-            return fu, yaku_list, 13 * full, YAKU_MAN, full * 8000
+            return fu, yaku_list, 13 * full, ScoreLevel.YAKU_MAN, full * 8000
         number = np.zeros(shape=len(self.combinations))
         common_yaku_list = []
         if self._is_under_the_sea:
@@ -1053,24 +1057,24 @@ class ScoreCalculator:
         if number < 5:
             if score > 2000:
                 score = 2000
-                level = MAN_GAN
+                level = ScoreLevel.MAN_GAN
             else:
-                level = NONE
+                level = ScoreLevel.NONE
         elif number == 5:
             score = 2000
-            level = MAN_GAN
+            level = ScoreLevel.MAN_GAN
         elif 6 <= number <= 7:
             score = 3000
-            level = HANE_MAN
+            level = ScoreLevel.HANE_MAN
         elif 8 <= number <= 10:
             score = 4000
-            level = BAI_MAN
+            level = ScoreLevel.BAI_MAN
         elif 11 <= number <= 12:
             score = 6000
-            level = SAN_BAI_MAN
+            level = ScoreLevel.SAN_BAI_MAN
         else:
             score = 8000
-            level = TOTAL_YAKU_MAN
+            level = ScoreLevel.KAZO_E_YAKU_MAN
         if dora_count:
             yaku.append(f'ドラ {dora_count}')
         return fu, common_yaku_list + yaku, int(number), level, int(score)
