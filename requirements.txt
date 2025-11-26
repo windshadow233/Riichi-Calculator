@@ -1,2 +1,2 @@
 numpy==1.24.3
-streamlit==1.22.0
+nicegui==3.0.4
