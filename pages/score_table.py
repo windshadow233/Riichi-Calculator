@@ -161,7 +161,7 @@ table2 = """<table class="wikitable" style="text-align:center">
 """
 
 
-def points_lookup_page():
+def score_table_page():
     ui.page_title('点数速查')
     with ui.card().classes('w-full flat bordered').style('overflow-x: scroll; max-width: 100vw'):
         with html.header().style('text-align:center; font-size: 32px;'):

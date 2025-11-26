@@ -3,7 +3,7 @@ from pages import (
     calculator_page,
     yaku_list_page,
     chinitsu_practice_page,
-    points_lookup_page,
+    score_table_page,
     menu
 )
 
@@ -21,7 +21,7 @@ def root():
         '/calculator': calculator_page,
         '/yaku-list': yaku_list_page,
         '/chinitsu-practice': chinitsu_practice_page,
-        '/points-lookup': points_lookup_page,
+        '/score-table': score_table_page,
     })
     dark = ui.dark_mode(True)
     ui.switch('Dark mode').bind_value(dark)
@@ -38,7 +38,7 @@ def main_page():
             ui.button('🧮 立直麻将计算器', on_click=lambda: ui.navigate.to('/calculator'))
             ui.button('📜 役种一览', on_click=lambda: ui.navigate.to('/yaku-list'))
             ui.button('🎯 清一色听牌练习', on_click=lambda: ui.navigate.to('/chinitsu-practice'))
-            ui.button('🔍 点数速查', on_click=lambda: ui.navigate.to('/points-lookup'))
+            ui.button('🔍 点数速查', on_click=lambda: ui.navigate.to('/score-table'))
 
 
 ui.run(root)
