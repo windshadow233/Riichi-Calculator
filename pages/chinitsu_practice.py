@@ -1,7 +1,5 @@
-import random
-
 from nicegui import ui, html
-from pages.utils import text, text_with_background
+from pages.utils import text_with_background
 from mahjong.utils import *
 from mahjong.display import id2png
 
