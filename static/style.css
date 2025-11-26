@@ -1,0 +1,81 @@
+.nicegui-content,.nicegui-card{align-items: center;}
+.tiles {
+        display: flex;
+        height:100%;
+        overflow-x:scroll;
+        overflow-y:hidden;
+        white-space: nowrap;
+        margin : 0 0 5px 0;
+    }
+.tile {
+    height:50px;
+    margin:1px;
+}
+.blank-tile {
+    width: 10px;
+    height:50px;
+}
+:root {
+    --bg-color: #f8f9fa; /* 日间模式背景颜色 */
+    --border-color: #a2a9b1; /* 边框颜色 */
+    --text-color: #202122; /* 文字颜色 */
+    --th-bg-color: #eaecf0; /* 表头背景颜色 */
+    --cell-bg-color: white; /* 单元格背景颜色 */
+    --cell-text-color: black; /* 单元格文字颜色 */
+}
+
+.q-dark {
+    --bg-color: #121212; /* 夜间模式背景颜色 */
+    --border-color: #444; /* 边框颜色 */
+    --text-color: #e0e0e0; /* 文字颜色 */
+    --th-bg-color: #333; /* 表头背景颜色 */
+    --cell-bg-color: #222; /* 单元格背景颜色 */
+    --cell-text-color: #ffffff; /* 单元格文字颜色 */
+}
+
+.wikitable {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 1em 0;
+    border: 1px solid var(--border-color);
+    border-collapse: collapse;
+}
+
+.wikitable > tr > th, .wikitable > * > tr > th {
+    background-color: var(--th-bg-color);
+    text-align: center;
+}
+
+.wikitable > tr > th, .wikitable > tr > td, .wikitable > * > tr > th, .wikitable > * > tr > td {
+    border: 1px solid var(--border-color);
+    padding: 0.2em 0.4em;
+    background: var(--cell-bg-color);
+    color: var(--cell-text-color);
+}
+
+th {
+    display: table-cell;
+    vertical-align: inherit;
+    font-weight: bold;
+    text-align: center; /* 修正了 text-align 的属性 */
+}
+
+table {
+    border-collapse: separate;
+    text-indent: initial;
+    border-spacing: 2px;
+}
+
+@media (prefers-color-scheme: dark) {
+    .wikitable {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+    }
+    .wikitable > tr > th, .wikitable > * > tr > th {
+        background-color: var(--th-bg-color);
+    }
+    .wikitable > tr > th, .wikitable > tr > td, .wikitable > * > tr > th, .wikitable > * > tr > td {
+        background: var(--cell-bg-color);
+        color: var(--cell-text-color);
+    }
+}

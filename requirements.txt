@@ -1,2 +1,3 @@
 numpy==1.24.3
 nicegui==3.0.4
+ex4nicegui==0.9.0

@@ -91,7 +91,8 @@ class ScoreCalculator:
             use_ancient_yaku=False,
             is_blessing_of_man=False,
             tsubamegaeshi=False,
-            kanfuri=False
+            kanfuri=False,
+            **kwargs
     ):
         """
         万子:0-9m
