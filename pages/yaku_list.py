@@ -1,7 +1,7 @@
 from nicegui import ui, html
 import json
 from mahjong.display import id2png
-from pages.utils import text
+from pages.utils import text_with_background
 
 
 def load():
@@ -38,9 +38,9 @@ def yaku_list_page():
                             html.strong(name)
                         ui.chat_message(desc, avatar='/static/ichihime-0_0.png')
                         if concealed_required:
-                            text("门清限定", 'green')
+                            text_with_background("门清限定", bgcolor='blue')
                         elif kuisagari:
-                            text("副露减一番", color='orange')
+                            text_with_background("副露减一番", bgcolor='orange')
                         if example:
                             ui.html(id2png(example), sanitize=False)
                         ui.separator()
