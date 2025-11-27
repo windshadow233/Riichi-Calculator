@@ -24,7 +24,7 @@ def root():
         '/score-table': score_table_page,
     })
     dark = ui.dark_mode(True)
-    ui.switch('Dark mode').bind_value(dark)
+    ui.switch('夜间模式').bind_value(dark)
 
 
 def main_page():
