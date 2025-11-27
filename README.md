@@ -6,8 +6,4 @@
 
 因非大规模使用，脚本并没有采用打表的方法，而是使用普通的深度优先搜索算法来拆分手牌。
 
-同时为了偷懒，使用了一款非常方便的傻瓜式web框架streamlit。
-
-更新：借助[YOLOv8](https://github.com/ultralytics/ultralytics)训练目标检测网络初步实现识图功能，标注数据偏少，待优化。
-
 体验地址: [立直麻将计算器](https://riichi.fyz666.xyz)
