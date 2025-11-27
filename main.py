@@ -41,4 +41,4 @@ def main_page():
             ui.button('🔍 点数速查', on_click=lambda: ui.navigate.to('/score-table'))
 
 
-ui.run(root, favicon='static/favicon.ico')
+ui.run(root, favicon='static/favicon.ico', reconnect_timeout=120)
