@@ -1,19 +1,20 @@
 .nicegui-content,.nicegui-card{align-items: center;}
 .tiles {
-        display: flex;
-        height:100%;
-        overflow-x:scroll;
-        overflow-y:hidden;
-        white-space: nowrap;
-        margin : 0 0 5px 0;
-    }
+    display: flex;
+    height:100%;
+    overflow-x:scroll;
+    overflow-y:hidden;
+    white-space: nowrap;
+    margin : 0 0 5px 0;
+}
 .tile {
     height:50px;
     margin:1px;
 }
 .blank-tile {
-    width: 10px;
-    height:50px;
+    width: 0;
+    margin-left: 5px;
+    margin-right: 5px;
 }
 :root {
     --bg-color: #f8f9fa; /* 日间模式背景颜色 */
