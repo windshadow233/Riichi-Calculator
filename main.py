@@ -6,6 +6,7 @@ from pages import (
     score_table_page,
     menu
 )
+from pages.utils import text
 
 
 app.add_static_files('/static', 'static')
@@ -31,9 +32,7 @@ def main_page():
     ui.page_title('立直麻将工具箱')
     with ui.card().classes('w-full flat bordered'):
 
-        ui.label("""
-        欢迎使用立直麻将工具箱！此工具箱包含下面功能。
-        """)
+        text("""欢迎使用立直麻将工具箱！此工具箱包含下面功能。""")
         with ui.column().classes('w-full items-center'):
             ui.button('🧮 立直麻将计算器', on_click=lambda: ui.navigate.to('/calculator'))
             ui.button('📜 役种一览', on_click=lambda: ui.navigate.to('/yaku-list'))
