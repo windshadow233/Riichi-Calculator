@@ -1,9 +1,9 @@
-from nicegui import ui, html
+from nicegui import ui
 import re
 import math
 from mahjong.display import id2png, str2png
 from mahjong.score import ScoreCalculator, AKA_MAN, AKA_PIN, AKA_SOU
-from pages.utils import text, text_with_background
+from pages.utils import text, text_with_background, help_button
 
 
 def calculator_page():
@@ -152,24 +152,20 @@ def calculator_page():
     with ui.card().classes('flat bordered').style('overflow-x: scroll; max-width: 100vw'):
         with ui.row().classes(f'w-full gap-{gap}'):
             with ui.input(label="牌面").classes(f'w-[calc(70%-{gap * 3}px)]') as tiles_input:
-                with ui.button(icon='help').props('round dense flat'):
-                    ui.tooltip("请按照以下格式填写牌面字符串: "
-                               "\n其中，万、饼、索分别用数字1-9加上字母'm'、'p'、's'进行表示。赤宝牌用数字0加上对应的字母表示。"
-                               "\n字牌(東南西北白發中)分别用1z-7z表示。"
-                               "\n副露以空格分隔，写在手牌后，如果是暗杠，则写五次对应的数字。"
-                               "\n例如, 若和牌者的手牌有三萬、赤五萬、两个一饼，和了牌是四萬，副露为一二三饼的顺子、白板的暗杠以及六索的明杠，则应在此栏填入下面的字符串:"
-                               "\n'30m11p 123p 55555z 6666s'，并且在后面的'和了牌'一栏填写'4m'").style('white-space: pre-wrap')
+                help_button("请按照以下格式填写牌面字符串: "
+                                                               "\n其中，万、饼、索分别用数字1-9加上字母'm'、'p'、's'进行表示。赤宝牌用数字0加上对应的字母表示。"
+                                                               "\n字牌(東南西北白發中)分别用1z-7z表示。"
+                                                               "\n副露以空格分隔，写在手牌后，如果是暗杠，则写五次对应的数字。"
+                                                               "\n例如, 若和牌者的手牌有三萬、赤五萬、两个一饼，和了牌是四萬，副露为一二三饼的顺子、白板的暗杠以及六索的明杠，则应在此栏填入下面的字符串:"
+                                                               "\n'30m11p 123p 55555z 6666s'，并且在后面的'和了牌'一栏填写'4m'")
             with ui.input(label="和了牌",
                           validation={'输入错误': lambda s: calculate_button and re.match('^([0-9][mps]|[1-7]z)$', s) is not None}).classes(f'w-[calc(30%-{gap * 3}px)]') as hu_tile_input:
-                with ui.button(icon='help').props('round dense flat'):
-                    ui.tooltip("表示方法与'牌面'相同，只填一张牌（听牌计算时不需要填写）").style('white-space: pre-wrap')
+                help_button("表示方法与'牌面'相同，只填一张牌（听牌计算时不需要填写）")
         with ui.row().classes(f'w-full gap-{gap}'):
             with ui.input(label="宝牌指示牌").classes(f'w-[calc(50%-{gap * 3}px)]') as dora_input:
-                with ui.button(icon='help').props('round dense flat'):
-                    ui.tooltip("表示方法与'牌面'相同").style('white-space: pre-wrap')
+                help_button("表示方法与'牌面'相同")
             with ui.input(label="里宝指示牌").classes(f'w-[calc(50%-{gap * 3}px)]') as ura_dora_input:
-                with ui.button(icon='help').props('round dense flat'):
-                    ui.tooltip("表示方法与'牌面'相同").style('white-space: pre-wrap')
+                help_button("表示方法与'牌面'相同")
         with ui.row().classes(f'w-full gap-{gap}'):
             with ui.column().classes(f'w-[calc(50%-{gap * 3}px)]'):
                 ui.label('场风')
@@ -186,45 +182,34 @@ def calculator_page():
         with ui.row().classes(f'w-full gap-{gap}'):
             with ui.column().classes(f'w-[calc(33%-{gap * 3}px)]'):
                 with ui.checkbox(text='自摸') as is_self_draw_box:
-                    with ui.button(icon='help').props('round dense flat'):
-                        ui.tooltip('荣和时不勾选').style('white-space: pre-wrap')
+                    help_button('荣和时不勾选此项')
                 with ui.checkbox(text='一发') as ippatsu_box:
-                    with ui.button(icon='help').props('round dense flat'):
-                        ui.tooltip('立直后在无人鸣牌的状态下一巡内和牌').style('white-space: pre-wrap')
+                    help_button('立直后在无人鸣牌的状态下一巡内和牌')
                 with ui.checkbox(text='海底/河底') as is_under_the_sea_box:
-                    with ui.button(icon='help').props('round dense flat'):
-                        ui.tooltip('最后一张牌自摸/荣和').style('white-space: pre-wrap')
+                    help_button('最后一张牌自摸/荣和')
             with ui.column().classes(f'w-[calc(33%-{gap * 3}px)]'):
                 with ui.checkbox(text='岭上') as is_after_a_kong_box:
-                    with ui.button(icon='help').props('round dense flat'):
-                        ui.tooltip('用摸到的岭上牌和牌').style('white-space: pre-wrap')
+                    help_button('用摸到的岭上牌和牌')
                 with ui.checkbox(text='抢杠') as is_robbing_the_kong_box:
-                    with ui.button(icon='help').props('round dense flat'):
-                        ui.tooltip('别家加杠时荣和（国士无双可抢暗杠').style('white-space: pre-wrap')
+                    help_button('别家加杠时荣和（国士无双可抢暗杠')
 
             with ui.column().classes(f'w-[calc(33%-{gap * 3}px)]'):
                 with ui.checkbox(text='天和') as is_blessing_of_heaven_box:
-                    with ui.button(icon='help').props('round dense flat'):
-                        ui.tooltip('亲家第一巡无鸣牌的状态下和牌').style('white-space: pre-wrap')
+                    help_button('亲家第一巡无鸣牌的状态下和牌')
                 with ui.checkbox(text='地和') as is_blessing_of_earth_box:
-                    with ui.button(icon='help').props('round dense flat'):
-                        ui.tooltip('子家第一巡轮到自己前无人鸣牌的状态下自摸和牌').style('white-space: pre-wrap')
+                    help_button('子家第一巡轮到自己前无人鸣牌的状态下自摸和牌')
         with ui.expansion('古役').classes('w-full'):
             with ui.row().classes(f'w-full gap-{gap}'):
                 with ui.column().classes(f'w-[calc(50%-{gap * 3}px)]'):
                     with ui.checkbox(text='开启古役') as use_ancient_yaku_box:
-                        with ui.button(icon='help').props('round dense flat'):
-                            ui.tooltip('计算收录在「雀魂」游戏中的古役').style('white-space: pre-wrap')
+                        help_button('计算收录在「雀魂」游戏中的古役')
                     with ui.checkbox(text='燕返') as tsubamegaeshi_box:
-                        with ui.button(icon='help').props('round dense flat'):
-                            ui.tooltip('荣和别家的第一张立直宣言牌').style('white-space: pre-wrap')
+                        help_button('荣和别家的第一张立直宣言牌')
                 with ui.column().classes(f'w-[calc(50%-{gap * 3}px)]'):
                     with ui.checkbox(text='杠振') as kanfuri_box:
-                        with ui.button(icon='help').props('round dense flat'):
-                            ui.tooltip('荣和别家开杠后打出的牌').style('white-space: pre-wrap')
+                        help_button('荣和别家开杠后打出的牌')
                     with ui.checkbox(text='人和') as is_blessing_of_man_box:
-                        with ui.button(icon='help').props('round dense flat'):
-                            ui.tooltip('子家第一巡轮到自己前无人鸣牌的状态下荣和').style('white-space: pre-wrap')
+                        help_button('子家第一巡轮到自己前无人鸣牌的状态下荣和')
         with ui.row().classes(f'w-full gap-{gap}'):
             with ui.column().classes(f'w-[calc(50%-{gap * 3}px)]'):
                 is_three_player_game_box = ui.checkbox(text='三麻')

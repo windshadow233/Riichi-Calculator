@@ -10,5 +10,5 @@ def menu():
                 ui.menu_item('🎯 清一色听牌练习', lambda: ui.navigate.to('/chinitsu-practice'))
                 ui.menu_item('🔍 点数速查', lambda: ui.navigate.to('/score-table'))
                 ui.separator()
-                ui.menu_item('Home', lambda: ui.navigate.to('/'))
-                ui.menu_item('Close', menu.close)
+                ui.menu_item('主页', lambda: ui.navigate.to('/'))
+                ui.menu_item('关闭', menu.close)
