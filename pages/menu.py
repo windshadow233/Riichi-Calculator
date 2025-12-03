@@ -8,6 +8,7 @@ def menu():
                 ui.menu_item('🧮 立直麻将计算器', lambda: ui.navigate.to('/calculator'))
                 ui.menu_item('📜 役种一览', lambda: ui.navigate.to('/yaku-list'))
                 ui.menu_item('🎯 清一色听牌练习', lambda: ui.navigate.to('/chinitsu-practice'))
+                ui.menu_item('🎯 清一色切牌练习', lambda: ui.navigate.to('/chinitsu-discard-practice'))
                 ui.menu_item('🔍 点数速查', lambda: ui.navigate.to('/score-table'))
                 ui.separator()
                 ui.menu_item('主页', lambda: ui.navigate.to('/'))

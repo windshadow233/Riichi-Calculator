@@ -134,7 +134,34 @@ def pattern2tiles(t, ptn):
     return tiles
 
 
-def answer(tiles):
+def add_one_tile(tiles):
+    t = tiles[0] // 10
+    counter = AutoCleanCounter(tiles)
+    candidates = []
+    for i in range(9):
+        tile = t * 10 + i
+        if counter[tile] < 4:
+            candidates.append(tile)
+    return sorted(tiles + [random.choice(candidates)])
+
+
+def machi_answer(tiles):
     t = tiles[0] // 10
     counter = AutoCleanCounter(tiles)
     return machi(t, counter)
+
+
+def kiri_answer(tiles):
+    t = tiles[0] // 10
+    counter = AutoCleanCounter(tiles)
+    max_count = {i: 4 - counter[i] for i in range(t * 10, t * 10 + 9)}
+    record = {}
+    for tile in tiles:
+        if tile in record:
+            continue
+        counter[tile] -= 1
+        machi_tiles = machi(t, counter)
+        counter[tile] += 1
+        record[tile] = sum(max_count[m] for m in machi_tiles)
+    m = max(record.values())
+    return sorted([tile for tile, val in record.items() if val == m])

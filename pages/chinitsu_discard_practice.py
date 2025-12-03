@@ -1,21 +1,23 @@
 from nicegui import ui, html
 import random
 from pages.utils import text_with_background
-from mahjong.utils import machi_answer, random_pattern, pattern2tiles
+from mahjong.utils import kiri_answer, random_pattern, pattern2tiles, add_one_tile
 from mahjong.display import id2png
 
 
-def chinitsu_practice_page():
+def chinitsu_discard_practice_page():
     global_status = {
         'tiles': [],
         'ans': [],
         'streaks': 0,
         'boxes': {}
     }
-    ui.page_title('清一色听牌练习')
+    ui.page_title('清一色切牌练习')
     with ui.card().classes('flat bordered').style('overflow-x: scroll; max-width: 100vw; min-width: 40vw'):
         with html.header().style('text-align: center; font-size: 32px;'):
-            html.strong('清一色听牌练习')
+            html.strong('清一色切牌练习')
+        html.strong('找出切掉后听牌枚数最多的那张牌')
+
 
         with ui.row().classes('w-full justify-center'):
             card_type = ui.radio(options=['万', '饼', '索', '随机'], value='万', on_change=lambda: change_type()).props('inline')
@@ -38,6 +40,12 @@ def chinitsu_practice_page():
                 key.delete()
             selection_area.clear()
 
+        def on_change(e, id_):
+            if e.value:
+                for k, v in global_status['boxes'].items():
+                    if v != id_:
+                        k.value = False
+
         def end():
             switch_btn.set_text('开始')
             submit_btn.disable()
@@ -54,9 +62,10 @@ def chinitsu_practice_page():
                 card_type = {'万': 0, '饼': 1, '索': 2}[card_type]
             ptn = random_pattern()
             tiles = pattern2tiles(card_type, ptn)
+            tiles = add_one_tile(tiles)
             global_status['tiles'] = tiles
-            global_status['ans'] = machi_answer(tiles)
-            boxes = [10 * card_type + i for i in range(9)]
+            global_status['ans'] = kiri_answer(tiles)
+            boxes = list(set(tiles))
             with question_display_area:
                 ui.html(id2png(tiles), sanitize=False)
                 ui.separator()
@@ -64,13 +73,16 @@ def chinitsu_practice_page():
                 for i in boxes:
                     with ui.column().classes('w-1/12').style('min-width: 50px'):
                         ui.html(id2png([i]), sanitize=False)
-                        global_status['boxes'][ui.checkbox()] = i
+                        global_status['boxes'][ui.checkbox(on_change=lambda e, x=i: on_change(e, x))] = i
 
         def submit_answer():
-            selections = [int(val) for key, val in global_status['boxes'].items() if key.value]
-            if not selections:
+            for key, val in global_status['boxes'].items():
+                if key.value:
+                    select = val
+                    break
+            else:
                 return
-            if selections == (ans := global_status['ans']):
+            if select in (ans := global_status['ans']):
                 global_status['streaks'] += 1
                 info.clear()
                 with info:

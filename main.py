@@ -3,6 +3,7 @@ from pages import (
     calculator_page,
     yaku_list_page,
     chinitsu_practice_page,
+    chinitsu_discard_practice_page,
     score_table_page,
     menu
 )
@@ -22,6 +23,7 @@ def root():
         '/calculator': calculator_page,
         '/yaku-list': yaku_list_page,
         '/chinitsu-practice': chinitsu_practice_page,
+        '/chinitsu-discard-practice': chinitsu_discard_practice_page,
         '/score-table': score_table_page,
     })
     dark = ui.dark_mode(True)
@@ -37,6 +39,7 @@ def main_page():
             ui.button('🧮 立直麻将计算器', on_click=lambda: ui.navigate.to('/calculator'))
             ui.button('📜 役种一览', on_click=lambda: ui.navigate.to('/yaku-list'))
             ui.button('🎯 清一色听牌练习', on_click=lambda: ui.navigate.to('/chinitsu-practice'))
+            ui.button('🎯 清一色切牌练习', on_click=lambda: ui.navigate.to('/chinitsu-discard-practice'))
             ui.button('🔍 点数速查', on_click=lambda: ui.navigate.to('/score-table'))
 
 
