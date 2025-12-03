@@ -17,7 +17,7 @@ def chinitsu_discard_practice_page():
         with html.header().style('text-align: center; font-size: 32px;'):
             html.strong('清一色切牌练习')
         html.strong('门前清一色经常不知道切哪张？来练练吧！')
-
+        html.strong('你需要选择切出后听牌枚数最多的那张牌，若已经和了，选“和了”')
         with ui.row().classes('w-full justify-center'):
             card_type = ui.radio(options=['万', '饼', '索', '随机'], value='万', on_change=lambda: change_type()).props('inline')
 
