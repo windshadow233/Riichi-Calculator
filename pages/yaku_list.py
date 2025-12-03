@@ -36,7 +36,7 @@ def yaku_list_page():
                         example = item.get('example')
                         with html.header().style('font-size: 26px;'):
                             html.strong(name)
-                        ui.chat_message(desc, avatar='/static/ichihime-0_0.png')
+                        ui.chat_message(desc, avatar='/static/png/ichihime-0_0.png')
                         if concealed_required:
                             text_with_background("门清限定", bgcolor='blue')
                         elif kuisagari:

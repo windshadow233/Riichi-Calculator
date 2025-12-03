@@ -32,6 +32,7 @@ def load_png():
     pngs[90] = "/static/png/chun.png"
 
     pngs[-2] = "/static/png/back.png"
+    pngs[-1] = "/static/png/agari.png"
     return pngs
 
 

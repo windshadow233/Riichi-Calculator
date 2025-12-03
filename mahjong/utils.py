@@ -154,6 +154,8 @@ def machi_answer(tiles):
 def kiri_answer(tiles):
     t = tiles[0] // 10
     counter = AutoCleanCounter(tiles)
+    if is_agari(counter):
+        return [-1]
     max_count = {i: 4 - counter[i] for i in range(t * 10, t * 10 + 9)}
     record = {}
     for tile in tiles:

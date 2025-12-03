@@ -1,7 +1,7 @@
 from nicegui import ui, html
 import random
 from pages.utils import text_with_background
-from mahjong.utils import kiri_answer, random_pattern, pattern2tiles, add_one_tile
+from mahjong.utils import kiri_answer, random_pattern, pattern2tiles, add_one_tile, is_agari
 from mahjong.display import id2png
 
 
@@ -16,8 +16,7 @@ def chinitsu_discard_practice_page():
     with ui.card().classes('flat bordered').style('overflow-x: scroll; max-width: 100vw; min-width: 40vw'):
         with html.header().style('text-align: center; font-size: 32px;'):
             html.strong('清一色切牌练习')
-        html.strong('找出切掉后听牌枚数最多的那张牌')
-
+        html.strong('经常清一色不知道打哪张？来练练吧！')
 
         with ui.row().classes('w-full justify-center'):
             card_type = ui.radio(options=['万', '饼', '索', '随机'], value='万', on_change=lambda: change_type()).props('inline')
@@ -74,6 +73,9 @@ def chinitsu_discard_practice_page():
                     with ui.column().classes('w-1/12').style('min-width: 50px'):
                         ui.html(id2png([i]), sanitize=False)
                         global_status['boxes'][ui.checkbox(on_change=lambda e, x=i: on_change(e, x))] = i
+                with ui.column().classes('w-1/12').style('min-width: 50px'):
+                    ui.html(id2png([-1]), sanitize=False)
+                    global_status['boxes'][ui.checkbox(on_change=lambda e, x=-1: on_change(e, x))] = -1
 
         def submit_answer():
             for key, val in global_status['boxes'].items():
@@ -95,7 +97,10 @@ def chinitsu_discard_practice_page():
                 info.clear()
                 with info:
                     text_with_background(f'回答错误！正确答案：', bgcolor='red')
-                    ui.html(id2png(ans), sanitize=False)
+                    if ans == [-1]:
+                        text_with_background('和了', bgcolor='green')
+                    else:
+                        ui.html(id2png(ans), sanitize=False)
 
                     def nxt():
                         submit_btn.enable()
