@@ -98,10 +98,7 @@ def chinitsu_discard_practice_page():
                 info.clear()
                 with info:
                     text_with_background(f'回答错误！正确答案：', bgcolor='red')
-                    if ans == [-1]:
-                        text_with_background('和了', bgcolor='green')
-                    else:
-                        ui.html(id2png(ans), sanitize=False)
+                    ui.html(id2png(ans), sanitize=False)
 
                     def nxt():
                         submit_btn.enable()
