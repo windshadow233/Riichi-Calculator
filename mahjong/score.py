@@ -39,7 +39,7 @@ class ScoreCalculator:
         self._kuisagari = 0
 
         self._prevailing_wind = None
-        self._dealer_wind = None
+        self._seat_wind = None
         self._is_self_draw = False
         self._riichi = None
         self.hand_aka_dora = []
@@ -75,7 +75,7 @@ class ScoreCalculator:
             tiles: str,
             hu_tile: str,
             prevailing_wind,
-            dealer_wind,
+            seat_wind,
             is_self_draw,
             riichi,
             dora,
@@ -103,8 +103,8 @@ class ScoreCalculator:
         白发中:5-7z
         :param tiles: 手牌字符串，若有副露则以空格隔离，例：19m19p19s1234567z，1233m 5555m 789m 123m
         :param hu_tile: 和了牌
-        :param prevailing_wind: 场风 (东:1, 南:2, 西:3, 北:4)
-        :param dealer_wind: 自风 (同上)
+        :param prevailing_wind: 场风 (东:0, 南:1, 西:2, 北:3)
+        :param seat_wind: 自风 (同上)
         :param is_self_draw: 是否自摸
         :param riichi: 立直时值为1, 两立直时值为2, 否则为0 (非门清状态下此参数无效)
         :param dora: 宝牌指示牌(包含宝牌、杠宝牌)
@@ -157,8 +157,8 @@ class ScoreCalculator:
         self._has_furu = bool(self.called_tiles)
         self._is_concealed_hand = not self._has_furu or all(self.checker.is_concealed_kong(_) for _ in self.called_tiles)
         self._kuisagari = 1 - self._is_concealed_hand
-        self._prevailing_wind = [30, 40, 50, 60][prevailing_wind - 1]
-        self._dealer_wind = [30, 40, 50, 60][dealer_wind - 1]
+        self._prevailing_wind = [30, 40, 50, 60][prevailing_wind]
+        self._seat_wind = [30, 40, 50, 60][seat_wind]
         self._is_self_draw = is_self_draw
         self.dora = self.checker.str2id(dora)[0]
         self.dora = list(map(lambda x: x + 5 if x % 10 == 9 else x, self.dora))
@@ -172,8 +172,8 @@ class ScoreCalculator:
         self._is_under_the_sea = is_under_the_sea
         self._is_after_a_kong = is_after_a_kong and is_self_draw and any(self.checker.is_kong(_) for _ in self.called_tiles)
         self._is_robbing_the_kong = is_robbing_the_kong and not is_self_draw and self._counter[self.hu_tile] == 1
-        self._is_blessing_of_heaven = is_blessing_of_heaven and dealer_wind == 1 and is_self_draw and not self._has_furu
-        self._is_blessing_of_earth = is_blessing_of_earth and dealer_wind != 1 and is_self_draw and not self._has_furu
+        self._is_blessing_of_heaven = is_blessing_of_heaven and seat_wind == 0 and is_self_draw and not self._has_furu
+        self._is_blessing_of_earth = is_blessing_of_earth and seat_wind != 0 and is_self_draw and not self._has_furu
 
         self.combinations = list(self.checker.search_combinations(self.hand_tiles, len(self.called_tiles)))
         if not self.combinations and not self._has_furu:
@@ -182,7 +182,7 @@ class ScoreCalculator:
             self._is_thirteen_orphans = False
         self.is_hu = bool(self.combinations) and self.checker.check_called_tiles(self.called_tiles) or bool(self._is_thirteen_orphans)
         self._use_ancient_yaku = use_ancient_yaku
-        self._is_blessing_of_man = is_blessing_of_man and not is_self_draw and dealer_wind != 1 and not self._has_furu
+        self._is_blessing_of_man = is_blessing_of_man and not is_self_draw and seat_wind != 0 and not self._has_furu
         self._tsubamegaeshi = tsubamegaeshi and not self._is_self_draw
         self._kanfuri = kanfuri and not self._is_self_draw
         if self.is_hu:
@@ -236,7 +236,7 @@ class ScoreCalculator:
             if self.checker.is_triplet(tiles):
                 return 0
             if self.checker.is_pair(tiles):
-                if tiles[0] in DRAGONS or tiles[0] == self._dealer_wind or tiles[0] == self._prevailing_wind:
+                if tiles[0] in DRAGONS or tiles[0] == self._seat_wind or tiles[0] == self._prevailing_wind:
                     return 0
             if self.checker.is_seq(tiles):
                 if (self.hu_tile == tiles[0] and tiles[2] not in NINES) \
@@ -276,7 +276,7 @@ class ScoreCalculator:
                 n += 1
             if called_tile[0] == self._prevailing_wind:
                 n += 1
-            if called_tile[0] == self._dealer_wind:
+            if called_tile[0] == self._seat_wind:
                 n += 1
         combination = self.combinations[0]
         for tiles in combination:
@@ -286,7 +286,7 @@ class ScoreCalculator:
                     n += 1
                 if tile == self._prevailing_wind:
                     n += 1
-                if tile == self._dealer_wind:
+                if tile == self._seat_wind:
                     n += 1
         return n
 
@@ -751,7 +751,7 @@ class ScoreCalculator:
                 if self.checker.is_pair(tiles):
                     if tiles[0] == self._prevailing_wind:
                         value += 2
-                    if tiles[0] == self._dealer_wind:
+                    if tiles[0] == self._seat_wind:
                         value += 2
                     if tiles[0] in DRAGONS:
                         value += 2
@@ -1086,10 +1086,10 @@ if __name__ == '__main__':
     calculator.update(
         tiles='55z66z 77777z 11111z 11111s',
         hu_tile='5z',
-        prevailing_wind=1,
-        dealer_wind=1,
+        prevailing_wind=0,
+        seat_wind=0,
         is_self_draw=0,
-        riichi=2,
+        riichi=1,
         dora='363z99s',
         ura_dora='99s336z',
         north_dora=4,

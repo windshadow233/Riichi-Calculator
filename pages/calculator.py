@@ -14,7 +14,7 @@ def calculator_page():
         tiles = tiles_input.value.strip()
         hu_tile = hu_tile_input.value.strip()
         prevailing_wind = {'东': 0, '南': 1, '西': 2, '北': 3}[prevailing_wind_str.value]
-        dealer_wind = {'东': 0, '南': 1, '西': 2, '北': 3}[dealer_wind_str.value]
+        seat_wind = {'东': 0, '南': 1, '西': 2, '北': 3}[seat_wind_str.value]
         riichi = {'无': 0, '立直': 1, '两立直': 2}[riichi_str.value]
         is_self_draw = is_self_draw_box.value
         dora = dora_input.value.strip()
@@ -116,16 +116,12 @@ def calculator_page():
                         score_info = f"每人支付東家「{math.ceil(2 * calculator.score / 100) * 100 + 100 * game_number}」点"
                     else:
                         score_info = f"放铳者支付東家「{math.ceil(6 * calculator.score / 100) * 100 + 300 * game_number}」点"
-                        if game_number:
-                            score_info += f'（三麻「{math.ceil(6 * calculator.score / 100) * 100 + 200 * game_number}」点）'
                 else:
                     if data['is_self_draw']:
-                        score_info = f"東家支付{dealer_wind_str.value}家「{math.ceil(2 * calculator.score / 100) * 100 + 100 * game_number}」点，" \
-                                     f"其他人各支付{dealer_wind_str.value}家「{math.ceil(calculator.score / 100) * 100 + 100 * game_number}」点"
+                        score_info = f"東家支付{seat_wind_str.value}家「{math.ceil(2 * calculator.score / 100) * 100 + 100 * game_number}」点，" \
+                                     f"其他人各支付{seat_wind_str.value}家「{math.ceil(calculator.score / 100) * 100 + 100 * game_number}」点"
                     else:
-                        score_info = f"放铳者支付{dealer_wind_str.value}家「{math.ceil(4 * calculator.score / 100) * 100 + 300 * game_number}」点"
-                        if game_number:
-                            score_info += f'（三麻「{math.ceil(4 * calculator.score / 100) * 100 + 200 * game_number}」点）'
+                        score_info = f"放铳者支付{seat_wind_str.value}家「{math.ceil(4 * calculator.score / 100) * 100 + 300 * game_number}」点"
                 with ui.row().classes(f'w-full gap-{gap}'):
                     text_with_background(score_info, bgcolor='green')
         except Exception as e:
@@ -172,7 +168,7 @@ def calculator_page():
                 prevailing_wind_str = ui.radio(options=['东', '南', '西', '北'], value='东').props('inline')
             with ui.column().classes(f'w-[calc(50%-{gap * 3}px)]'):
                 ui.label('自风')
-                dealer_wind_str = ui.radio(options=['东', '南', '西', '北'], value='东').props('inline')
+                seat_wind_str = ui.radio(options=['东', '南', '西', '北'], value='东').props('inline')
         with ui.row().classes(f'w-full gap-{gap}'):
             with ui.column().classes(f'w-[calc(50%-{gap * 3}px)]'):
                 ui.label('立直情况')
