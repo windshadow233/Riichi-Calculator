@@ -111,17 +111,17 @@ def calculator_page():
                     with ui.row().classes(f'w-full gap-{gap}'):
                         text_with_background(calculator.level, bgcolor='green')
                 game_number = game_number_input.value
-                if data['dealer_wind'] == 1:
+                if data['seat_wind'] == 0:
                     if data['is_self_draw']:
-                        score_info = f"每人支付東家「{math.ceil(2 * calculator.score / 100) * 100 + 100 * game_number}」点"
+                        score_info = f"每人支付東家「{math.ceil(2 * calculator.score / 100) * 100 + 100 * game_number:.0f}」点"
                     else:
-                        score_info = f"放铳者支付東家「{math.ceil(6 * calculator.score / 100) * 100 + 300 * game_number}」点"
+                        score_info = f"放铳者支付東家「{math.ceil(6 * calculator.score / 100) * 100 + 300 * game_number:.0f}」点"
                 else:
                     if data['is_self_draw']:
-                        score_info = f"東家支付{seat_wind_str.value}家「{math.ceil(2 * calculator.score / 100) * 100 + 100 * game_number}」点，" \
-                                     f"其他人各支付{seat_wind_str.value}家「{math.ceil(calculator.score / 100) * 100 + 100 * game_number}」点"
+                        score_info = f"東家支付{seat_wind_str.value}家「{math.ceil(2 * calculator.score / 100) * 100 + 100 * game_number:.0f}」点，" \
+                                     f"其他人各支付{seat_wind_str.value}家「{math.ceil(calculator.score / 100) * 100 + 100 * game_number:.0f}」点"
                     else:
-                        score_info = f"放铳者支付{seat_wind_str.value}家「{math.ceil(4 * calculator.score / 100) * 100 + 300 * game_number}」点"
+                        score_info = f"放铳者支付{seat_wind_str.value}家「{math.ceil(4 * calculator.score / 100) * 100 + 300 * game_number:.0f}」点"
                 with ui.row().classes(f'w-full gap-{gap}'):
                     text_with_background(score_info, bgcolor='green')
         except Exception as e:
@@ -149,13 +149,15 @@ def calculator_page():
         with ui.row().classes(f'w-full gap-{gap}'):
             with ui.input(label="牌面").classes(f'w-[calc(70%-{gap * 3}px)]') as tiles_input:
                 help_button("请按照以下格式填写牌面字符串: "
-                                                               "\n其中，万、饼、索分别用数字1-9加上字母'm'、'p'、's'进行表示。赤宝牌用数字0加上对应的字母表示。"
-                                                               "\n字牌(東南西北白發中)分别用1z-7z表示。"
-                                                               "\n副露以空格分隔，写在手牌后，如果是暗杠，则写五次对应的数字。"
-                                                               "\n例如, 若和牌者的手牌有三萬、赤五萬、两个一饼，和了牌是四萬，副露为一二三饼的顺子、白板的暗杠以及六索的明杠，则应在此栏填入下面的字符串:"
-                                                               "\n'30m11p 123p 55555z 6666s'，并且在后面的'和了牌'一栏填写'4m'")
+                            "\n其中，万、饼、索分别用数字1-9加上字母'm'、'p'、's'进行表示。赤宝牌用数字0加上对应的字母表示。"
+                            "\n字牌(東南西北白發中)分别用1z-7z表示。"
+                            "\n副露以空格分隔，写在手牌后，如果是暗杠，则写五次对应的数字。"
+                            "\n例如, 若和牌者的手牌有三萬、赤五萬、两个一饼，和了牌是四萬，副露为一二三饼的顺子、白板的暗杠以及六索的明杠，则应在此栏填入下面的字符串:"
+                            "\n'30m11p 123p 55555z 6666s'，并且在后面的'和了牌'一栏填写'4m'")
             with ui.input(label="和了牌",
-                          validation={'输入错误': lambda s: calculate_button and re.match('^([0-9][mps]|[1-7]z)$', s) is not None}).classes(f'w-[calc(30%-{gap * 3}px)]') as hu_tile_input:
+                          validation={'输入错误': lambda s: calculate_button and re.match('^([0-9][mps]|[1-7]z)$',
+                                                                                          s) is not None}).classes(
+                f'w-[calc(30%-{gap * 3}px)]') as hu_tile_input:
                 help_button("表示方法与'牌面'相同，只填一张牌（听牌计算时不需要填写）")
         with ui.row().classes(f'w-full gap-{gap}'):
             with ui.input(label="宝牌指示牌").classes(f'w-[calc(50%-{gap * 3}px)]') as dora_input:
