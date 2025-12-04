@@ -27,7 +27,9 @@ def chinitsu_discard_practice_page():
             if not switch_btn.value:
                 return
             question_display_area.clear()
+            info.clear()
             clear_boxes()
+            submit_btn.enable()
             generate_question(card_type.value)
 
         def start():
