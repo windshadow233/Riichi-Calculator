@@ -102,18 +102,17 @@ def chinitsu_discard_practice_page():
                     ui.html(id2png(ans), sanitize=False)
                     if analysis := global_status['analysis']:
                         ui.separator()
-                        text('解析:')
-                        for tile, (s, machi_tiles) in analysis:
-                            with ui.row():
-                                with ui.column():
-                                    text('切:')
-                                    ui.html(id2png([tile]), sanitize=False)
-                                with ui.column():
-                                    text('听:')
-                                    ui.html(id2png(machi_tiles), sanitize=False)
-                            text(f'共{s}枚')
-                            ui.separator()
-
+                        with ui.expansion('解析', icon='help').classes('w-full').style('font-size: 18px; font-weight: bold;'):
+                            for tile, (s, machi_tiles) in analysis:
+                                with ui.row():
+                                    with ui.row():
+                                        text('切:')
+                                        ui.html(id2png([tile]), sanitize=False)
+                                    with ui.row():
+                                        text('听:')
+                                        ui.html(id2png(machi_tiles), sanitize=False)
+                                text(f'共 {s} 枚', color='green')
+                                ui.separator()
                     def nxt():
                         submit_btn.enable()
                         info.clear()

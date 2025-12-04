@@ -170,4 +170,4 @@ def kiri_answer(tiles):
         s = sum(max_count[m] for m in machi_tiles)
         m = max(s, m)
         record[tile] = [s, machi_tiles]
-    return sorted([tile for tile, (val, _) in record.items() if val == m]), sorted(list(record.items()))
+    return sorted([tile for tile, (val, _) in record.items() if val == m]), sorted(list(record.items()), key=lambda x: x[1][0], reverse=True)
