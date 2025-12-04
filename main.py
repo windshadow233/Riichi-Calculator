@@ -1,14 +1,5 @@
 from nicegui import ui, app, html
-from pages import (
-    calculator_page,
-    yaku_list_page,
-    chinitsu_practice_page,
-    chinitsu_discard_practice_page,
-    score_table_page,
-    menu
-)
-from pages.utils import text
-
+from pages.menu import pages, menu
 
 app.add_static_files('/static', 'static')
 
@@ -20,11 +11,7 @@ def root():
     menu()
     ui.sub_pages({
         '/': main_page,
-        '/calculator': calculator_page,
-        '/yaku-list': yaku_list_page,
-        '/chinitsu-practice': chinitsu_practice_page,
-        '/chinitsu-discard-practice': chinitsu_discard_practice_page,
-        '/score-table': score_table_page,
+        **{path: page for _, path, page in pages}
     })
     dark = ui.dark_mode(True)
     ui.switch('夜间模式').bind_value(dark)
@@ -36,11 +23,8 @@ def main_page():
 
         html.strong("""欢迎使用立直麻将工具箱！此工具箱包含以下功能。""").style('text-align: center; font-size: 20px;')
         with ui.column().classes('w-full items-center'):
-            ui.button('🧮 立直麻将计算器', on_click=lambda: ui.navigate.to('/calculator'))
-            ui.button('📜 役种一览', on_click=lambda: ui.navigate.to('/yaku-list'))
-            ui.button('🎯 清一色听牌练习', on_click=lambda: ui.navigate.to('/chinitsu-practice'))
-            ui.button('🎯 清一色切牌练习', on_click=lambda: ui.navigate.to('/chinitsu-discard-practice'))
-            ui.button('🔍 点数速查', on_click=lambda: ui.navigate.to('/score-table'))
+            for name, path, _ in pages:
+                ui.button(name, on_click=lambda p=path: ui.navigate.to(p))
 
 
 ui.run(root, favicon='static/favicon.ico', reconnect_timeout=120)
