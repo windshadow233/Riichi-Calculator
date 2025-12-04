@@ -1,6 +1,6 @@
 from nicegui import ui, html
 import random
-from pages.utils import text_with_background
+from pages.utils import text_with_background, text
 from mahjong.utils import kiri_answer, random_pattern, pattern2tiles, add_one_tile, is_agari
 from mahjong.display import id2png
 
@@ -9,6 +9,7 @@ def chinitsu_discard_practice_page():
     global_status = {
         'tiles': [],
         'ans': [],
+        'analysis': [],
         'streaks': 0,
         'boxes': {}
     }
@@ -64,7 +65,7 @@ def chinitsu_discard_practice_page():
             tiles = pattern2tiles(card_type, ptn)
             tiles = add_one_tile(tiles)
             global_status['tiles'] = tiles
-            global_status['ans'] = kiri_answer(tiles)
+            global_status['ans'], global_status['analysis'] = kiri_answer(tiles)
             boxes = list(set(tiles))
             with question_display_area:
                 ui.html(id2png(tiles), sanitize=False)
@@ -99,6 +100,19 @@ def chinitsu_discard_practice_page():
                 with info:
                     text_with_background(f'回答错误！正确答案：', bgcolor='red')
                     ui.html(id2png(ans), sanitize=False)
+                    if analysis := global_status['analysis']:
+                        ui.separator()
+                        text('解析:')
+                        for tile, (s, machi_tiles) in analysis:
+                            with ui.row():
+                                with ui.column():
+                                    text('切:')
+                                    ui.html(id2png([tile]), sanitize=False)
+                                with ui.column():
+                                    text('听:')
+                                    ui.html(id2png(machi_tiles), sanitize=False)
+                            text(f'共{s}枚')
+                            ui.separator()
 
                     def nxt():
                         submit_btn.enable()

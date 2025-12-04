@@ -155,15 +155,19 @@ def kiri_answer(tiles):
     t = tiles[0] // 10
     counter = AutoCleanCounter(tiles)
     if is_agari(counter):
-        return [-1]
+        return [-1], []
     max_count = {i: 4 - counter[i] for i in range(t * 10, t * 10 + 9)}
     record = {}
+    m = 0
     for tile in tiles:
         if tile in record:
             continue
         counter[tile] -= 1
         machi_tiles = machi(t, counter)
         counter[tile] += 1
-        record[tile] = sum(max_count[m] for m in machi_tiles)
-    m = max(record.values())
-    return sorted([tile for tile, val in record.items() if val == m])
+        if not machi_tiles:
+            continue
+        s = sum(max_count[m] for m in machi_tiles)
+        m = max(s, m)
+        record[tile] = [s, machi_tiles]
+    return sorted([tile for tile, (val, _) in record.items() if val == m]), sorted(list(record.items()))
