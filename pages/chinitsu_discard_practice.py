@@ -107,12 +107,10 @@ def chinitsu_discard_practice_page():
                         with ui.expansion('解析', icon='help').classes('w-full').style('font-size: 18px; font-weight: bold;'):
                             for tile, (s, machi_tiles) in analysis:
                                 with ui.row():
-                                    with ui.row():
-                                        text('切:')
-                                        ui.html(id2png([tile]), sanitize=False)
-                                    with ui.row():
-                                        text('听:')
-                                        ui.html(id2png(machi_tiles), sanitize=False)
+                                    text('切:')
+                                    ui.html(id2png([tile]), sanitize=False)
+                                    text('听:')
+                                    ui.html(id2png(machi_tiles), sanitize=False)
                                 text(f'共 {s} 枚', color='green')
                                 ui.separator()
                     def nxt():
