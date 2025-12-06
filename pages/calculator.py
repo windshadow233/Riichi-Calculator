@@ -67,7 +67,8 @@ def calculator_page():
                 with display:
                     ui.separator()
                     text('副露')
-                    ui.html(str2png(tiles[re.search(' +', tiles).end():], True), sanitize=False)
+                    furo_pos = tiles.index(' ')
+                    ui.html(str2png(tiles[furo_pos + 1:], True), sanitize=False)
             with display:
                 ui.separator()
                 with ui.row().classes(f'w-full gap-{gap}'):

@@ -100,7 +100,7 @@ def chinitsu_discard_practice_page():
                 global_status['streaks'] = 0
                 info.clear()
                 with info:
-                    text_with_background(f'回答错误！正确答案：', bgcolor='red')
+                    text_with_background('回答错误！正确答案：', bgcolor='red')
                     ui.html(id2png(ans), sanitize=False)
                     if analysis := global_status['analysis']:
                         ui.separator()
