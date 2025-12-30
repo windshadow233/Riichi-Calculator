@@ -1,9 +1,6 @@
 import pickle
 import random
 from collections import Counter
-from mahjong.checker import Mahjong
-
-mahjong = Mahjong()
 
 
 class AutoCleanCounter(Counter):

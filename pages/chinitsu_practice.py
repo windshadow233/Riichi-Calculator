@@ -5,7 +5,7 @@ from mahjong.utils import machi_answer, random_pattern, pattern2tiles
 from mahjong.display import id2png
 
 
-def chinitsu_practice_page():
+async def chinitsu_practice_page():
     global_status = {
         'tiles': [],
         'ans': [],

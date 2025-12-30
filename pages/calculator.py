@@ -6,7 +6,7 @@ from mahjong.score import ScoreCalculator, AKA_MAN, AKA_PIN, AKA_SOU
 from pages.utils import text, text_with_background, help_button
 
 
-def calculator_page():
+async def calculator_page():
     gap = 3
     calculator = ScoreCalculator()
 

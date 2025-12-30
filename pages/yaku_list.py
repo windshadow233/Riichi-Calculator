@@ -2,19 +2,20 @@ from nicegui import ui, html
 import json
 from mahjong.display import id2png
 from pages.utils import text_with_background
+import aiofiles
 
 
-def load():
+async def load():
     tabs = [s.center(6, '\u2001') for s in ["一番", "二番", "三番", "六番", "满贯", "役满", "双倍役满"]]
     numbers = ['1', '2', '3', '6', '5', '13', '26']
-    with open("data/yaku_list.json", encoding='utf-8') as f:
-        data = json.loads(f.read())
+    async with aiofiles.open("data/yaku_list.json", encoding='utf-8') as f:
+        data = json.loads(await f.read())
     return tabs, numbers, data
 
 
-def yaku_list_page():
+async def yaku_list_page():
     ui.page_title('役种一览')
-    tabs, numbers, data = load()
+    tabs, numbers, data = await load()
     with ui.card().classes('flat bordered').style('overflow-x: scroll; max-width: 100vw'):
         with html.header().style('text-align:center; font-size: 32px;'):
             html.strong('役种一览')

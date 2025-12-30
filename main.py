@@ -17,7 +17,7 @@ def root():
     ui.switch('夜间模式').bind_value(dark)
 
 
-def main_page():
+async def main_page():
     ui.page_title('立直麻将工具箱')
     with ui.card().classes('w-full flat bordered'):
 
