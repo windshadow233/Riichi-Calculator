@@ -155,7 +155,8 @@ class ScoreCalculator:
             return
         self._tiles_set = set(self._tiles)
         self._has_furu = bool(self.called_tiles)
-        self._is_concealed_hand = not self._has_furu or all(self.checker.is_concealed_kong(_) for _ in self.called_tiles)
+        self._is_concealed_hand = not self._has_furu or all(
+            self.checker.is_concealed_kong(_) for _ in self.called_tiles)
         self._kuisagari = 1 - self._is_concealed_hand
         self._prevailing_wind = [30, 40, 50, 60][prevailing_wind]
         self._seat_wind = [30, 40, 50, 60][seat_wind]
@@ -170,7 +171,8 @@ class ScoreCalculator:
         self._riichi = riichi
         self._ippatsu = ippatsu and bool(riichi)
         self._is_under_the_sea = is_under_the_sea
-        self._is_after_a_kong = is_after_a_kong and is_self_draw and any(self.checker.is_kong(_) for _ in self.called_tiles)
+        self._is_after_a_kong = is_after_a_kong and is_self_draw and any(
+            self.checker.is_kong(_) for _ in self.called_tiles)
         self._is_robbing_the_kong = is_robbing_the_kong and not is_self_draw and self._counter[self.hu_tile] == 1
         self._is_blessing_of_heaven = is_blessing_of_heaven and seat_wind == 0 and is_self_draw and not self._has_furu
         self._is_blessing_of_earth = is_blessing_of_earth and seat_wind != 0 and is_self_draw and not self._has_furu
@@ -180,7 +182,8 @@ class ScoreCalculator:
             self._is_thirteen_orphans = self.thirteen_orphans()
         else:
             self._is_thirteen_orphans = False
-        self.is_hu = bool(self.combinations) and self.checker.check_called_tiles(self.called_tiles) or bool(self._is_thirteen_orphans)
+        self.is_hu = bool(self.combinations) and self.checker.check_called_tiles(self.called_tiles) or bool(
+            self._is_thirteen_orphans)
         self._use_ancient_yaku = use_ancient_yaku
         self._is_blessing_of_man = is_blessing_of_man and not is_self_draw and seat_wind != 0 and not self._has_furu
         self._tsubamegaeshi = tsubamegaeshi and not self._is_self_draw
@@ -198,7 +201,9 @@ class ScoreCalculator:
         return ''.join(ID2UNICODE[_] for _ in self.hand_tiles)
 
     def called_unicode(self):
-        return '\u2001'.join(f'🀫{ID2UNICODE[_[0]]}{ID2UNICODE[_[0]]}🀫' if len(_) == 5 else ''.join(ID2UNICODE[tile] for tile in _) for _ in self.called_tiles)
+        return '\u2001'.join(
+            f'🀫{ID2UNICODE[_[0]]}{ID2UNICODE[_[0]]}🀫' if len(_) == 5 else ''.join(ID2UNICODE[tile] for tile in _) for _
+            in self.called_tiles)
 
     def dora_unicode(self):
         return ''.join(ID2UNICODE[_] for _ in self.dora)
@@ -437,7 +442,8 @@ class ScoreCalculator:
     def triple_pungs(self):
         """三色同刻"""
         values = []
-        called_triplets = list(filter(lambda x: self.checker.is_triplet(x) or self.checker.is_kong(x), self.called_tiles))
+        called_triplets = list(
+            filter(lambda x: self.checker.is_triplet(x) or self.checker.is_kong(x), self.called_tiles))
         called_triplet_ids = list(map(lambda x: x[0], called_triplets))
         for combination in self.combinations:
             triplets = list(filter(self.checker.is_triplet, combination))
@@ -457,17 +463,18 @@ class ScoreCalculator:
     def all_types(self):
         """古役 五门齐"""
         if not self._tiles_set.isdisjoint(MANS) \
-            and not self._tiles_set.isdisjoint(PINS) \
-            and not self._tiles_set.isdisjoint(SOUS) \
-            and not self._tiles_set.isdisjoint(WINDS) \
-            and not self._tiles_set.isdisjoint(DRAGONS):
+                and not self._tiles_set.isdisjoint(PINS) \
+                and not self._tiles_set.isdisjoint(SOUS) \
+                and not self._tiles_set.isdisjoint(WINDS) \
+                and not self._tiles_set.isdisjoint(DRAGONS):
             return 2
         return 0
 
     def three_consecutive_triplets(self):
         """古役 三连刻"""
         values = []
-        called_triplets = list(filter(lambda x: self.checker.is_triplet(x) or self.checker.is_kong(x), self.called_tiles))
+        called_triplets = list(
+            filter(lambda x: self.checker.is_triplet(x) or self.checker.is_kong(x), self.called_tiles))
         called_triplet_ids = list(map(lambda x: x[0], called_triplets))
         for combination in self.combinations:
             triplets = list(filter(self.checker.is_triplet, combination))
@@ -760,12 +767,13 @@ class ScoreCalculator:
                         if self.hu_tile == tiles[1]:
                             value += 2
                             wait_form = 0
+                        elif not (self.hu_tile == tiles[0] and tiles[2] not in NINES) \
+                                and not (self.hu_tile == tiles[-1] and tiles[0] not in ONES):
+                            value += 2
+                            wait_form = 1
                         else:
-                            if not (self.hu_tile == tiles[0] and tiles[2] not in NINES) \
-                                    and not (self.hu_tile == tiles[-1] and tiles[0] not in ONES):
-                                value += 2
-                                wait_form = 1
-                    if self.checker.is_pair(tiles) and self.hu_tile == tiles[0]:
+                            wait_form = -1
+                    elif self.checker.is_pair(tiles) and self.hu_tile == tiles[0]:
                         value += 2
                         wait_form = 2
             values.append(math.ceil(value / 10) * 10)
@@ -1084,17 +1092,17 @@ class ScoreCalculator:
 if __name__ == '__main__':
     calculator = ScoreCalculator()
     calculator.update(
-        tiles='55z66z 77777z 11111z 11111s',
-        hu_tile='5z',
+        tiles='2344566m456789s',
+        hu_tile='6m',
         prevailing_wind=0,
         seat_wind=0,
         is_self_draw=0,
-        riichi=1,
-        dora='363z99s',
-        ura_dora='99s336z',
-        north_dora=4,
+        riichi=0,
+        dora='',
+        ura_dora='',
+        north_dora=0,
         ippatsu=False,
-        is_under_the_sea=True,
+        is_under_the_sea=False,
         is_after_a_kong=False,
         is_robbing_the_kong=False,
         is_blessing_of_heaven=False,
