@@ -78,7 +78,7 @@ async def chinitsu_discard_practice_page():
                         ui.html(id2png([i]), sanitize=False)
                         global_status['boxes'][ui.checkbox(on_change=lambda e, x=i: on_change(e, x))] = i
                 with ui.column().classes('w-1/12').style('min-width: 50px'):
-                    ui.html(id2png([-1]), sanitize=False)
+                    ui.html(id2png([-4]), sanitize=False)
                     global_status['boxes'][ui.checkbox(on_change=lambda e, x=-1: on_change(e, x))] = -1
 
         def submit_answer():
