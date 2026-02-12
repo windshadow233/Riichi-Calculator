@@ -873,8 +873,8 @@ class ScoreCalculator:
                 full += 1
         if self._use_ancient_yaku:
             if self.big_seven_stars():
-                n = 26
-                yaku_list.append('大七星(2倍役满)')
+                n = 13
+                yaku_list = ['大七星(2倍役满)']
             elif self.big_wheels():
                 n = 13
                 yaku_list.append('大车轮(役满)')
