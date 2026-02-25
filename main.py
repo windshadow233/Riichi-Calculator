@@ -20,11 +20,15 @@ def root():
 async def main_page():
     ui.page_title('立直麻将工具箱')
     with ui.card().classes('w-full flat bordered'):
-
         html.strong("""欢迎使用立直麻将工具箱！此工具箱包含以下功能。""").style('text-align: center; font-size: 20px;')
+
         with ui.column().classes('w-full items-center'):
             for name, path, _ in pages:
                 ui.button(name, on_click=lambda p=path: ui.navigate.to(p))
+        
+        html.p('注意：此网页版将不再维护与更新，建议使用小程序版 — 功能更多，体验更佳！').style('text-align: center; font-size: 14px; color: #666;')
+        ui.image(source='/static/miniprogram.png').style('display:block; margin:12px auto; max-width:240px;')
+
 
 
 ui.run(root, favicon='static/favicon.ico', reconnect_timeout=120)
