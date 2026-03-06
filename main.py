@@ -27,7 +27,7 @@ async def main_page():
                 ui.button(name, on_click=lambda p=path: ui.navigate.to(p))
         
         html.p('注意：此网页版将不再维护与更新，建议使用小程序版 — 功能更多，体验更佳！').style('text-align: center; font-size: 14px; color: #666;')
-        ui.image(source='/static/miniprogram.png').style('display:block; margin:12px auto; max-width:240px;')
+        ui.image(source='/static/miniprogram.jpg').style('display:block; margin:12px auto; max-width:240px;')
 
 
 
